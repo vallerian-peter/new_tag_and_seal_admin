@@ -1,0 +1,61 @@
+<?php
+
+namespace App\Filament\Resources\MedicineTypes;
+
+use App\Filament\Resources\MedicineTypes\Pages\CreateMedicineType;
+use App\Filament\Resources\MedicineTypes\Pages\EditMedicineType;
+use App\Filament\Resources\MedicineTypes\Pages\ListMedicineTypes;
+use App\Filament\Resources\MedicineTypes\Schemas\MedicineTypeForm;
+use App\Filament\Resources\MedicineTypes\Tables\MedicineTypesTable;
+use App\Models\MedicineType;
+use BackedEnum;
+use UnitEnum;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Table;
+
+class MedicineTypeResource extends Resource
+{
+    protected static ?string $model = MedicineType::class;
+
+    protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
+
+    protected static UnitEnum|string|null $navigationGroup = 'Logs Reference Data';
+
+    protected static ?string $navigationLabel = 'Medicine Types';
+
+    protected static ?string $modelLabel = 'Medicine Type';
+
+    protected static ?string $pluralModelLabel = 'Medicine Types';
+
+    protected static ?int $navigationSort = 3;
+
+    public static function form(Schema $schema): Schema
+    {
+        return MedicineTypeForm::configure($schema);
+    }
+
+    public static function table(Table $table): Table
+    {
+        return MedicineTypesTable::configure($table);
+    }
+
+    public static function getRelations(): array
+    {
+        return [
+            //
+        ];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListMedicineTypes::route('/'),
+            'create' => CreateMedicineType::route('/create'),
+            'edit' => EditMedicineType::route('/{record}/edit'),
+        ];
+    }
+}
+
+
