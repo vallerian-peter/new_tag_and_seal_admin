@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Farms\Pages;
 
 use App\Filament\Resources\Farms\FarmResource;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class ViewFarm extends ViewRecord
