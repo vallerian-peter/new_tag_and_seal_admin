@@ -33,7 +33,7 @@ class ViewFarm extends ViewRecord
                         TextEntry::make('name')
                             ->label('Farm Name')
                             ->icon('heroicon-o-building-storefront')
-                            ->size(TextEntry\TextEntrySize::Large)
+                            ->size('lg')
                             ->weight('bold')
                             ->color('success'),
                         TextEntry::make('size')
@@ -43,7 +43,8 @@ class ViewFarm extends ViewRecord
                             ->label('Size Unit')
                             ->badge(),
                     ])
-                    ->columns(3),
+                    ->columns(3)
+                    ->columnSpanFull(),
 
                 Section::make('Farmer & Legal Information')
                     ->description('Farm ownership and legal status')

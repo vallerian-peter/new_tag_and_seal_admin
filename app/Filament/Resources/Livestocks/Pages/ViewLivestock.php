@@ -46,7 +46,7 @@ class ViewLivestock extends ViewRecord
                         TextEntry::make('name')
                             ->label('Animal Name')
                             ->icon('heroicon-o-cube')
-                            ->size(TextEntry\TextEntrySize::Large)
+                            ->size('lg')
                             ->weight('bold')
                             ->color('success'),
                         TextEntry::make('farmUuid')

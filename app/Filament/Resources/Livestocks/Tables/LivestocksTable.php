@@ -2,12 +2,27 @@
 
 namespace App\Filament\Resources\Livestocks\Tables;
 
+use App\Models\AbortedPregnancy;
+use App\Models\BirthEvent;
+use App\Models\Calving;
+use App\Models\Deworming;
+use App\Models\Disposal;
+use App\Models\Dryoff;
+use App\Models\Feeding;
+use App\Models\Insemination;
+use App\Models\Medication;
+use App\Models\Milking;
+use App\Models\Pregnancy;
+use App\Models\Transfer;
+use App\Models\Vaccination;
+use App\Models\WeightChange;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ActionGroup;
+use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -16,6 +31,7 @@ class LivestocksTable
     public static function configure(Table $table): Table
     {
         return $table
+            ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('#')
                     ->label('#')
@@ -88,13 +104,48 @@ class LivestocksTable
                 ActionGroup::make([
                     ViewAction::make(),
                     EditAction::make(),
-                    DeleteAction::make(),
+                    DeleteAction::make()
+                        ->before(function ($record) {
+                            // Delete all livestock logs/events before deleting Livestock
+                            self::deleteLivestockLogs($record);
+                        }),
                 ])
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->before(function ($records) {
+                            // Delete all livestock logs for each livestock
+                            foreach ($records as $livestock) {
+                                self::deleteLivestockLogs($livestock);
+                            }
+                        }),
                 ]),
             ]);
+    }
+
+    /**
+     * Delete all logs/events associated with a livestock.
+     */
+    protected static function deleteLivestockLogs($livestock): void
+    {
+        $livestockUuid = $livestock->uuid;
+        $deletedCount = 0;
+
+        // Delete all 14+ log types
+        $deletedCount += BirthEvent::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += AbortedPregnancy::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += WeightChange::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Vaccination::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Medication::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Deworming::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Feeding::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Milking::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Insemination::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Pregnancy::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Dryoff::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Disposal::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Transfer::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Calving::where('livestockUuid', $livestockUuid)->delete();
     }
 }
