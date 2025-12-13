@@ -30,19 +30,30 @@ class ExtensionOfficerFarmInvite extends Model
     }
 
     /**
-     * Generate access code in format: ACODE-random_5_number_3_characters=7-random_4_numbers
-     * Example: ACODE-12345ABC=7-1234
+     * Generate access code in format: ACODE-random_numbers_3_characters=7-random_numbers
+     * Total numbers (before and after =7-) must equal 7
+     * Example: ACODE-12345ABC=7-12 (5 numbers + 2 numbers = 7 total)
+     * Example: ACODE-1234ABC=7-123 (4 numbers + 3 numbers = 7 total)
      */
     public static function generateAccessCode(): string
     {
-        // Generate random 5 numbers
-        $randomNumbers = str_pad(rand(0, 99999), 5, '0', STR_PAD_LEFT);
-        
         // Generate random 3 uppercase characters
         $randomChars = strtoupper(Str::random(3));
         
-        // Generate random 4 numbers
-        $randomEndNumbers = str_pad(rand(0, 9999), 4, '0', STR_PAD_LEFT);
+        // Determine split: first part (3-5 numbers), second part (2-4 numbers), total = 7
+        // Randomly choose between different splits (3+4, 4+3, 5+2)
+        $splits = [[5, 2], [4, 3], [3, 4]];
+        $split = $splits[array_rand($splits)];
+        $firstPartLength = $split[0];
+        $secondPartLength = $split[1];
+        
+        // Generate random numbers for first part
+        $maxFirst = (int)str_repeat('9', $firstPartLength);
+        $randomNumbers = str_pad(rand(0, $maxFirst), $firstPartLength, '0', STR_PAD_LEFT);
+        
+        // Generate random numbers for second part
+        $maxSecond = (int)str_repeat('9', $secondPartLength);
+        $randomEndNumbers = str_pad(rand(0, $maxSecond), $secondPartLength, '0', STR_PAD_LEFT);
         
         return "ACODE-{$randomNumbers}{$randomChars}=7-{$randomEndNumbers}";
     }
