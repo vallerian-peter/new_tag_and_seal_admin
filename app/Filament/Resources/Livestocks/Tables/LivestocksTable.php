@@ -79,6 +79,18 @@ class LivestocksTable
                     ->numeric()
                     ->sortable()
                     ->toggleable(),
+                TextColumn::make('primaryColor')
+                    ->label('Primary Color')
+                    ->badge()
+                    ->color('info')
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('secondaryColor')
+                    ->label('Secondary Color')
+                    ->badge()
+                    ->color('warning')
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()

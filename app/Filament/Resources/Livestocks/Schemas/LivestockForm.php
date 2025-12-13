@@ -86,6 +86,60 @@ class LivestockForm
                 DatePicker::make('dateFirstEnteredToFarm'),
                 TextInput::make('weightAsOnRegistration')
                     ->default(null),
+                Select::make('primaryColor')
+                    ->label('Primary Color')
+                    ->options(self::getColorOptions())
+                    ->searchable()
+                    ->nullable()
+                    ->live()
+                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
+                        // If primary color is selected and matches secondary color, clear secondary color
+                        $secondaryColor = $get('secondaryColor');
+                        if ($state === $secondaryColor) {
+                            $set('secondaryColor', null);
+                        }
+                    }),
+                Select::make('secondaryColor')
+                    ->label('Secondary Color')
+                    ->options(function (callable $get) {
+                        $primaryColor = $get('primaryColor');
+                        $options = self::getColorOptions();
+                        // Filter out primary color from secondary color options
+                        if ($primaryColor && isset($options[$primaryColor])) {
+                            unset($options[$primaryColor]);
+                        }
+                        return $options;
+                    })
+                    ->searchable()
+                    ->nullable()
+                    ->live(),
             ]);
+    }
+
+    /**
+     * Get color options for dropdown
+     */
+    public static function getColorOptions(): array
+    {
+        return [
+            'red' => 'Red',
+            'green' => 'Green',
+            'blue' => 'Blue',
+            'black' => 'Black',
+            'white' => 'White',
+            'brown' => 'Brown',
+            'yellow' => 'Yellow',
+            'orange' => 'Orange',
+            'pink' => 'Pink',
+            'gray' => 'Gray',
+            'grey' => 'Grey',
+            'purple' => 'Purple',
+            'tan' => 'Tan',
+            'beige' => 'Beige',
+            'cream' => 'Cream',
+            'gold' => 'Gold',
+            'silver' => 'Silver',
+            'mixed' => 'Mixed',
+        ];
     }
 }

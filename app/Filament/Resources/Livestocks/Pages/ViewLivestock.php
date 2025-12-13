@@ -127,6 +127,25 @@ class ViewLivestock extends ViewRecord
                     ->columns(3)
                     ->collapsible(),
 
+                Section::make('Color Information')
+                    ->description('Primary and secondary colors')
+                    ->schema([
+                        TextEntry::make('primaryColor')
+                            ->label('Primary Color')
+                            ->badge()
+                            ->color('info')
+                            ->icon('heroicon-o-paint-brush')
+                            ->placeholder('Not specified'),
+                        TextEntry::make('secondaryColor')
+                            ->label('Secondary Color')
+                            ->badge()
+                            ->color('warning')
+                            ->icon('heroicon-o-swatch')
+                            ->placeholder('Not specified'),
+                    ])
+                    ->columns(2)
+                    ->collapsible(),
+
                 Section::make('System Timestamps')
                     ->description('Record creation and modification dates')
                     ->schema([

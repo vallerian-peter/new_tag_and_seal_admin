@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\UserRole;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Farmer extends Model
 {
@@ -14,14 +15,17 @@ class Farmer extends Model
     {
         parent::boot();
 
-        // When a farmer is being deleted, also delete the corresponding user
+        // When a farmer is being deleted, also delete the corresponding user and access codes
         static::deleting(function ($farmer) {
             if ($farmer->email) {
                 // Find and delete the user with the same email and farmer role
-                User::where('email', $farmer->email)
+                \App\Models\User::where('email', $farmer->email)
                     ->where('role', UserRole::FARMER)
                     ->delete();
             }
+            
+            // Delete all extension officer farm invites (access codes) linked to this farmer
+            \App\Models\ExtensionOfficerFarmInvite::where('farmerId', $farmer->id)->delete();
         });
     }
     protected $fillable = [
@@ -93,5 +97,15 @@ class Farmer extends Model
     public function creator()
     {
         return $this->belongsTo(User::class, 'createdBy');
+    }
+
+    public function farms(): HasMany
+    {
+        return $this->hasMany(Farm::class, 'farmerId');
+    }
+
+    public function extensionOfficerInvites(): HasMany
+    {
+        return $this->hasMany(ExtensionOfficerFarmInvite::class, 'farmerId');
     }
 }
