@@ -50,10 +50,28 @@ class ViewFarm extends ViewRecord
                     ->description('Farm ownership and legal status')
                     ->schema([
                         TextEntry::make('farmerId')
-                            ->label('Farmer ID')
-                            ->icon('heroicon-o-user'),
+                            ->label('Farmer')
+                            ->icon('heroicon-o-user')
+                            ->formatStateUsing(function ($record) {
+                                if (!$record->relationLoaded('farmer')) {
+                                    $record->load('farmer');
+                                }
+                                if ($record->farmer) {
+                                    return trim(($record->farmer->firstName ?? '') . ' ' . 
+                                               ($record->farmer->middleName ?? '') . ' ' . 
+                                               ($record->farmer->surname ?? ''));
+                                }
+                                return 'N/A';
+                            })
+                            ->weight('bold'),
                         TextEntry::make('legalStatusId')
-                            ->label('Legal Status'),
+                            ->label('Legal Status')
+                            ->formatStateUsing(function ($record) {
+                                if (!$record->relationLoaded('legalStatus')) {
+                                    $record->load('legalStatus');
+                                }
+                                return $record->legalStatus?->name ?? 'N/A';
+                            }),
                         TextEntry::make('status')
                             ->label('Farm Status')
                             ->badge()
@@ -88,15 +106,50 @@ class ViewFarm extends ViewRecord
                     ->description('Administrative location details')
                     ->schema([
                         TextEntry::make('countryId')
-                            ->label('Country ID'),
+                            ->label('Country')
+                            ->formatStateUsing(function ($record) {
+                                if (!$record->relationLoaded('country')) {
+                                    $record->load('country');
+                                }
+                                return $record->country?->name ?? 'N/A';
+                            })
+                            ->icon('heroicon-o-globe-alt'),
                         TextEntry::make('regionId')
-                            ->label('Region ID'),
+                            ->label('Region')
+                            ->formatStateUsing(function ($record) {
+                                if (!$record->relationLoaded('region')) {
+                                    $record->load('region');
+                                }
+                                return $record->region?->name ?? 'N/A';
+                            })
+                            ->icon('heroicon-o-map'),
                         TextEntry::make('districtId')
-                            ->label('District ID'),
+                            ->label('District')
+                            ->formatStateUsing(function ($record) {
+                                if (!$record->relationLoaded('district')) {
+                                    $record->load('district');
+                                }
+                                return $record->district?->name ?? 'N/A';
+                            })
+                            ->icon('heroicon-o-map-pin'),
                         TextEntry::make('wardId')
-                            ->label('Ward ID'),
+                            ->label('Ward')
+                            ->formatStateUsing(function ($record) {
+                                if (!$record->relationLoaded('ward')) {
+                                    $record->load('ward');
+                                }
+                                return $record->ward?->name ?? 'N/A';
+                            })
+                            ->icon('heroicon-o-map-pin'),
                         TextEntry::make('villageId')
-                            ->label('Village ID')
+                            ->label('Village')
+                            ->formatStateUsing(function ($record) {
+                                if (!$record->relationLoaded('village')) {
+                                    $record->load('village');
+                                }
+                                return $record->village?->name ?? 'N/A';
+                            })
+                            ->icon('heroicon-o-home')
                             ->placeholder('N/A'),
                     ])
                     ->columns(5)
