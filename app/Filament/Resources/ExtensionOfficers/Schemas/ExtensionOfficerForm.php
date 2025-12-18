@@ -9,6 +9,7 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Hash;
 
 class ExtensionOfficerForm
 {
@@ -43,6 +44,7 @@ class ExtensionOfficerForm
                     ->password()
                     ->required(fn ($livewire) => $livewire instanceof \App\Filament\Resources\ExtensionOfficers\Pages\CreateExtensionOfficer)
                     ->dehydrated(fn ($state) => !empty($state))
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
                     ->maxLength(255),
                 Select::make('gender')
                     ->label('Gender')
