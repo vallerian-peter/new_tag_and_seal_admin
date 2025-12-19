@@ -41,10 +41,10 @@ class ExtensionOfficerForm
                     ->maxLength(255),
                 TextInput::make('password')
                     ->label('Password')
-                    ->password()
-                    ->required(fn ($livewire) => $livewire instanceof \App\Filament\Resources\ExtensionOfficers\Pages\CreateExtensionOfficer)
-                    ->dehydrated(fn ($state) => !empty($state))
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
+                    ->default('password')
+                    ->readOnly()
+                    ->dehydrateStateUsing(fn ($state) => Hash::make($state ?? 'password'))
+                    ->helperText('Default password is set to: password')
                     ->maxLength(255),
                 Select::make('gender')
                     ->label('Gender')
