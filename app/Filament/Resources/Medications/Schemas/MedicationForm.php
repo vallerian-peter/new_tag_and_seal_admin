@@ -17,7 +17,7 @@ class MedicationForm
     {
         return $schema
             ->components([
-                EventLogFormHelpers::uuidField('medication'),
+                EventLogFormHelpers::uuidField('treatment'),
                 EventLogFormHelpers::farmField(),
                 EventLogFormHelpers::livestockField(),
                 Select::make('diseaseId')
@@ -41,7 +41,7 @@ class MedicationForm
                     ->helperText('Include duration and unit, e.g. 7 days')
                     ->nullable(),
                 DatePicker::make('medicationDate')
-                    ->label('Medication Date')
+                    ->label('Treatment Date')
                     ->afterStateHydrated(function (DatePicker $component, $state): void {
                         if (blank($state) || $state instanceof Carbon) {
                             return;
@@ -64,6 +64,31 @@ class MedicationForm
 
                         return (string) $state;
                     }),
+                DatePicker::make('nextMedicationDate')
+                    ->label('Next Treatment Date')
+                    ->afterStateHydrated(function (DatePicker $component, $state): void {
+                        if (blank($state) || $state instanceof Carbon) {
+                            return;
+                        }
+
+                        try {
+                            $component->state(Carbon::parse($state));
+                        } catch (\Throwable) {
+                            $component->state(null);
+                        }
+                    })
+                    ->dehydrateStateUsing(function ($state) {
+                        if (blank($state)) {
+                            return null;
+                        }
+
+                        if ($state instanceof Carbon) {
+                            return $state->format('Y-m-d');
+                        }
+
+                        return (string) $state;
+                    })
+                    ->nullable(),
                 Textarea::make('remarks')
                     ->label('Remarks')
                     ->rows(3)

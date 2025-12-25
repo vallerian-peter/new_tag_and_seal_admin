@@ -47,9 +47,14 @@ class MedicationsTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('medicationDate')
-                    ->label('Medication Date')
+                    ->label('Treatment Date')
                     ->date()
                     ->sortable(),
+                TextColumn::make('nextMedicationDate')
+                    ->label('Next Treatment Date')
+                    ->date()
+                    ->sortable()
+                    ->toggleable(),
                 TextColumn::make('quantity')
                     ->label('Quantity')
                     ->toggleable(),
@@ -65,7 +70,7 @@ class MedicationsTable
                     Action::make('view')
                         ->label('View')
                         ->icon('heroicon-o-eye')
-                        ->modalHeading('Medication Details')
+                        ->modalHeading('Treatment Details')
                         ->modalSubmitAction(false)
                         ->modalCancelActionLabel('Close')
                         ->modalWidth('2xl')
@@ -89,7 +94,7 @@ class MedicationsTable
                                                 ->icon('heroicon-o-tag'),
                                         ]),
                                 ]),
-                            Section::make('Medication Details')
+                            Section::make('Treatment Details')
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
@@ -105,10 +110,15 @@ class MedicationsTable
                                                 ->icon('heroicon-o-beaker')
                                                 ->color('success'),
                                             TextEntry::make('medicationDate')
-                                                ->label('Medication Date')
+                                                ->label('Treatment Date')
                                                 ->weight(FontWeight::Bold)
                                                 ->icon('heroicon-o-calendar')
                                                 ->state(fn ($record) => blank($record->medicationDate) ? '—' : Carbon::parse($record->medicationDate)->format('d M Y')),
+                                            TextEntry::make('nextMedicationDate')
+                                                ->label('Next Treatment Date')
+                                                ->weight(FontWeight::Bold)
+                                                ->icon('heroicon-o-calendar-days')
+                                                ->state(fn ($record) => blank($record->nextMedicationDate) ? '—' : Carbon::parse($record->nextMedicationDate)->format('d M Y')),
                                             TextEntry::make('quantity')
                                                 ->label('Quantity')
                                                 ->weight(FontWeight::Bold)

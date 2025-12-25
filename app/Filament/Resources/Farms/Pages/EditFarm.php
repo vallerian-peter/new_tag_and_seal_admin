@@ -59,7 +59,7 @@ class EditFarm extends EditRecord
         \App\Models\AbortedPregnancy::where('livestockUuid', $livestockUuid)->delete();
         \App\Models\WeightChange::where('livestockUuid', $livestockUuid)->delete();
         \App\Models\Vaccination::where('livestockUuid', $livestockUuid)->delete();
-        \App\Models\Medication::where('livestockUuid', $livestockUuid)->delete();
+        \App\Models\Treatment::where('livestockUuid', $livestockUuid)->delete();
         \App\Models\Deworming::where('livestockUuid', $livestockUuid)->delete();
         \App\Models\Feeding::where('livestockUuid', $livestockUuid)->delete();
         \App\Models\Milking::where('livestockUuid', $livestockUuid)->delete();

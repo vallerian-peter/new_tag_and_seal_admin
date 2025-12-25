@@ -5,8 +5,10 @@ namespace App\Models;
 use App\Support\UuidHelper;
 use Illuminate\Database\Eloquent\Model;
 
-class Medication extends Model
+class Treatment extends Model
 {
+    protected $table = 'treatments';
+
     protected $fillable = [
         'uuid',
         'farmUuid',
@@ -16,14 +18,15 @@ class Medication extends Model
         'quantity',
         'withdrawalPeriod',
         'medicationDate',
+        'nextMedicationDate',
         'remarks',
     ];
 
     protected static function booted(): void
     {
-        static::creating(function (self $medication): void {
-            if (empty($medication->uuid)) {
-                $medication->uuid = UuidHelper::generate();
+        static::creating(function (self $treatment): void {
+            if (empty($treatment->uuid)) {
+                $treatment->uuid = UuidHelper::generate();
             }
         });
     }

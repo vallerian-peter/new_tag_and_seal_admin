@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class LivestockResource extends Resource
 {
@@ -31,6 +32,18 @@ class LivestockResource extends Resource
     protected static ?string $pluralModelLabel = 'Livestock';
 
     protected static ?int $navigationSort = 3;
+
+    protected static ?string $recordTitleAttribute = 'identificationNumber';
+
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return static::getUrl('index');
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['identificationNumber', 'name', 'dummyTagId', 'barcodeTagId', 'rfidTagId'];
+    }
 
     public static function form(Schema $schema): Schema
     {

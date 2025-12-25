@@ -14,6 +14,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class MedicineResource extends Resource
 {
@@ -30,6 +31,13 @@ class MedicineResource extends Resource
     protected static ?string $pluralModelLabel = 'Medicines';
 
     protected static ?int $navigationSort = 4;
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return static::getUrl('index');
+    }
 
     public static function form(Schema $schema): Schema
     {

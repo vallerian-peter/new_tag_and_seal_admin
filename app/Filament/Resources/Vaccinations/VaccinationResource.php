@@ -13,6 +13,8 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
 use UnitEnum;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 
 class VaccinationResource extends Resource
 {
@@ -29,6 +31,32 @@ class VaccinationResource extends Resource
     protected static ?string $pluralModelLabel = 'Vaccinations';
 
     protected static ?int $navigationSort = 8;
+
+    protected static ?string $recordTitleAttribute = 'uuid';
+
+    public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
+    {
+        $record->loadMissing(['livestock', 'farm', 'vaccine']);
+        $livestockTag = $record->livestock?->identificationNumber ?? 'N/A';
+        $farmName = $record->farm?->name ?? 'N/A';
+        $vaccine = $record->vaccine?->name ?? 'N/A';
+        return "Vaccination - {$livestockTag} ({$farmName}) - {$vaccine}";
+    }
+
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return static::getUrl('index');
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['uuid', 'vaccinationNo', 'livestock.identificationNumber', 'farm.name', 'vaccine.name'];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): \Illuminate\Database\Eloquent\Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['livestock', 'farm', 'vaccine']);
+    }
 
     public static function form(Schema $schema): Schema
     {

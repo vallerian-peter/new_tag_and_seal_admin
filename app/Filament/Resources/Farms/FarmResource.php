@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 
 class FarmResource extends Resource
 {
@@ -31,6 +32,18 @@ class FarmResource extends Resource
     protected static ?string $pluralModelLabel = 'Farms';
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return static::getUrl('index');
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'referenceNo', 'regionalRegNo', 'physicalAddress'];
+    }
 
     public static function form(Schema $schema): Schema
     {

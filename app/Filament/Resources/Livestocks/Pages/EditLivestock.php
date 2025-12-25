@@ -11,7 +11,7 @@ use App\Models\Disposal;
 use App\Models\Dryoff;
 use App\Models\Feeding;
 use App\Models\Insemination;
-use App\Models\Medication;
+use App\Models\Treatment;
 use App\Models\Milking;
 use App\Models\Pregnancy;
 use App\Models\Transfer;
@@ -48,7 +48,7 @@ class EditLivestock extends EditRecord
         AbortedPregnancy::where('livestockUuid', $livestockUuid)->delete();
         WeightChange::where('livestockUuid', $livestockUuid)->delete();
         Vaccination::where('livestockUuid', $livestockUuid)->delete();
-        Medication::where('livestockUuid', $livestockUuid)->delete();
+        Treatment::where('livestockUuid', $livestockUuid)->delete();
         Deworming::where('livestockUuid', $livestockUuid)->delete();
         Feeding::where('livestockUuid', $livestockUuid)->delete();
         Milking::where('livestockUuid', $livestockUuid)->delete();

@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use App\Filament\Auth\CustomLogin;
+use App\Filament\GlobalSearch\ResourceGlobalSearchProvider;
 use App\Filament\Widgets\CustomAccountWidget;
 use App\Filament\Widgets\LivestockByTypeChart;
 use App\Filament\Widgets\LivestockDataStats;
@@ -71,6 +72,10 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('System & Configuration')
                     ->collapsed(false),
             ])
+            ->globalSearch(ResourceGlobalSearchProvider::class)
+            ->globalSearchKeyBindings(['mod+k', 'ctrl+k'])
+            ->globalSearchFieldKeyBindingSuffix()
+            ->globalSearchDebounce('300ms')
             ->userMenuItems([
                 'logout' => function (Action $action) {
                     return $action

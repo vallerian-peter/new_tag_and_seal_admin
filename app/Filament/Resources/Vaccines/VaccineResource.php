@@ -14,6 +14,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 use UnitEnum;
+use Illuminate\Database\Eloquent\Model;
 
 class VaccineResource extends Resource
 {
@@ -30,6 +31,13 @@ class VaccineResource extends Resource
     protected static ?string $pluralModelLabel = 'Vaccines';
 
     protected static ?int $navigationSort = 2;
+
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getGlobalSearchResultUrl(Model $record): string
+    {
+        return static::getUrl('index');
+    }
 
     public static function form(Schema $schema): Schema
     {

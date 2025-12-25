@@ -13,7 +13,7 @@ use App\Models\Feeding;
 use App\Models\Insemination;
 use App\Models\Livestock;
 use App\Models\LivestockType;
-use App\Models\Medication;
+use App\Models\Treatment;
 use App\Models\Milking;
 use App\Models\Pregnancy;
 use App\Models\Specie;
@@ -93,8 +93,8 @@ class LivestockDataStats extends BaseWidget
                 ->url(route('filament.admin.resources.vaccinations.index'))
                 ->icon('heroicon-o-check-circle'),
 
-            Stat::make('Medications', Medication::count())
-                ->description('Medication logs')
+            Stat::make('Treatments', Treatment::count())
+                ->description('Treatment logs')
                 ->descriptionIcon('heroicon-o-heart')
                 ->color('danger')
                 ->url(route('filament.admin.resources.medications.index'))

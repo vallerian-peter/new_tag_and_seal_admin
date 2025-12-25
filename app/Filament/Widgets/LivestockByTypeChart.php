@@ -9,7 +9,7 @@ use App\Models\Disposal;
 use App\Models\Dryoff;
 use App\Models\Feeding;
 use App\Models\Insemination;
-use App\Models\Medication;
+use App\Models\Treatment;
 use App\Models\Milking;
 use App\Models\Pregnancy;
 use App\Models\Transfer;
@@ -43,7 +43,7 @@ class LivestockByTypeChart extends ChartWidget
             'dewormings' => Deworming::class,
             'weightChanges' => WeightChange::class,
             'vaccinations' => Vaccination::class,
-            'medications' => Medication::class,
+            'treatments' => Treatment::class,
             'disposals' => Disposal::class,
             'transfers' => Transfer::class,
             'inseminations' => Insemination::class,
@@ -88,7 +88,7 @@ class LivestockByTypeChart extends ChartWidget
             'dewormings' => ['rgba(59, 130, 246, 1)', 'rgba(59, 130, 246, 0.2)'], // Royal Blue
             'weightChanges' => ['rgba(234, 179, 8, 1)', 'rgba(234, 179, 8, 0.2)'], // Gold Yellow
             'vaccinations' => ['rgba(139, 92, 246, 1)', 'rgba(139, 92, 246, 0.2)'], // Indigo Purple
-            'medications' => ['rgba(125, 211, 252, 1)', 'rgba(125, 211, 252, 0.2)'], // Light Sky Blue
+            'treatments' => ['rgba(125, 211, 252, 1)', 'rgba(125, 211, 252, 0.2)'], // Light Sky Blue
             'disposals' => ['rgba(239, 68, 68, 1)', 'rgba(239, 68, 68, 0.2)'], // Bright Red
             'transfers' => ['rgba(14, 165, 233, 1)', 'rgba(14, 165, 233, 0.2)'], // Sky Cyan
             'inseminations' => ['rgba(249, 115, 22, 1)', 'rgba(249, 115, 22, 0.2)'], // Burnt Orange
@@ -104,7 +104,7 @@ class LivestockByTypeChart extends ChartWidget
             'dewormings' => 'Dewormings',
             'weightChanges' => 'Weight Changes',
             'vaccinations' => 'Vaccinations',
-            'medications' => 'Medications',
+            'treatments' => 'Treatments',
             'disposals' => 'Disposals',
             'transfers' => 'Transfers',
             'inseminations' => 'Inseminations',

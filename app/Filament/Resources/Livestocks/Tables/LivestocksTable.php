@@ -10,7 +10,7 @@ use App\Models\Disposal;
 use App\Models\Dryoff;
 use App\Models\Feeding;
 use App\Models\Insemination;
-use App\Models\Medication;
+use App\Models\Treatment;
 use App\Models\Milking;
 use App\Models\Pregnancy;
 use App\Models\Transfer;
@@ -149,7 +149,7 @@ class LivestocksTable
         $deletedCount += AbortedPregnancy::where('livestockUuid', $livestockUuid)->delete();
         $deletedCount += WeightChange::where('livestockUuid', $livestockUuid)->delete();
         $deletedCount += Vaccination::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Medication::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += Treatment::where('livestockUuid', $livestockUuid)->delete();
         $deletedCount += Deworming::where('livestockUuid', $livestockUuid)->delete();
         $deletedCount += Feeding::where('livestockUuid', $livestockUuid)->delete();
         $deletedCount += Milking::where('livestockUuid', $livestockUuid)->delete();
