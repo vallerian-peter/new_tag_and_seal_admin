@@ -145,20 +145,6 @@ class MedicationsTable
                                         ->default('—')
                                         ->columnSpanFull(),
                                 ]),
-                            Section::make('Timestamps')
-                                ->schema([
-                                    Grid::make(2)
-                                        ->schema([
-                                            TextEntry::make('created_at')
-                                                ->label('Created At')
-                                                ->dateTime()
-                                                ->icon('heroicon-o-calendar'),
-                                            TextEntry::make('updated_at')
-                                                ->label('Updated At')
-                                                ->dateTime()
-                                                ->icon('heroicon-o-calendar-days'),
-                                        ]),
-                                ]),
                             Section::make('Date Information')
                                 ->schema([
                                     Grid::make(2)
