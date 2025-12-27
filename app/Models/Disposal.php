@@ -11,6 +11,7 @@ class Disposal extends Model
         'uuid',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'disposalTypeId',
         'reasons',
         'remarks',

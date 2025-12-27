@@ -12,6 +12,7 @@ class Insemination extends Model
         'uuid',
         'livestockUuid',
         'farmUuid',
+        'eventDate',
         'lastHeatDate',
         'currentHeatTypeId',
         'inseminationServiceId',

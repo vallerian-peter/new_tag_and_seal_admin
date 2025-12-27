@@ -21,6 +21,7 @@ class DewormingForm
                 EventLogFormHelpers::uuidField('deworming'),
                 EventLogFormHelpers::farmField(),
                 EventLogFormHelpers::livestockField(),
+                EventLogFormHelpers::eventDateField(),
                 Select::make('administrationRouteId')
                     ->label('Administration Route')
                     ->relationship('administrationRoute', 'name')

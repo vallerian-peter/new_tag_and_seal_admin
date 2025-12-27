@@ -12,6 +12,7 @@ class Vaccination extends Model
         'vaccinationNo',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'vaccineUuid',
         'diseaseId',
         'vetId',

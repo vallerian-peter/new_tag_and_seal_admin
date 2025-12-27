@@ -12,6 +12,7 @@ class Pregnancy extends Model
         'uuid',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'testResultId',
         'noOfMonths',
         'testDate',

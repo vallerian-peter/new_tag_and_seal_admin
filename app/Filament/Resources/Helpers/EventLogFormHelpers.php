@@ -4,6 +4,8 @@ namespace App\Filament\Resources\Helpers;
 
 use App\Models\Livestock;
 use App\Support\UuidHelper;
+use Carbon\Carbon;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Utilities\Get;
@@ -81,6 +83,42 @@ class EventLogFormHelpers
             ->required()
             ->disabled(fn (Get $get) => !$get('farmUuid'))
             ->helperText(fn (Get $get) => !$get('farmUuid') ? 'Please select a farm first' : null);
+    }
+
+    /**
+     * Generate Event Date DateTimePicker field
+     * Allows users to enter the actual date an event occurred
+     */
+    public static function eventDateField(): DateTimePicker
+    {
+        return DateTimePicker::make('eventDate')
+            ->label('Event Date')
+            ->helperText('Date and time when the event actually occurred')
+            ->displayFormat('d M Y, H:i')
+            ->seconds(false)
+            ->afterStateHydrated(function (DateTimePicker $component, $state): void {
+                if (blank($state) || $state instanceof Carbon) {
+                    return;
+                }
+
+                try {
+                    $component->state(Carbon::parse($state));
+                } catch (\Throwable) {
+                    $component->state(null);
+                }
+            })
+            ->dehydrateStateUsing(function ($state) {
+                if (blank($state)) {
+                    return null;
+                }
+
+                if ($state instanceof Carbon) {
+                    return $state->format('Y-m-d H:i:s');
+                }
+
+                return (string) $state;
+            })
+            ->nullable();
     }
 }
 

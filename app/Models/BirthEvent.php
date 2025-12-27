@@ -15,6 +15,7 @@ class BirthEvent extends Model
         'farmUuid',
         'livestockUuid',
         'eventType', // 'calving' or 'farrowing'
+        'eventDate',
         'startDate',
         'endDate',
         'birthTypeId',

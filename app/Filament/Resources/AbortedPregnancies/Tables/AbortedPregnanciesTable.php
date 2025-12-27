@@ -21,7 +21,7 @@ class AbortedPregnanciesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->defaultSort('created_at', 'desc')
+            ->defaultSort('eventDate', 'desc')
             ->columns([
                 TextColumn::make('#')
                     ->label('#')
@@ -34,6 +34,11 @@ class AbortedPregnanciesTable
                     ->label('Livestock Tag')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('eventDate')
+                    ->label('Event Date')
+                    ->dateTime()
+                    ->sortable()
+                    ->formatStateUsing(fn ($record, $state) => $state ?? $record->created_at),
                 TextColumn::make('abortionDate')
                     ->label('Abortion Date')
                     ->date()
@@ -124,16 +129,23 @@ class AbortedPregnanciesTable
                                         ->label('Remarks')
                                         ->default('—')
                                         ->columnSpanFull(),
+                                ]),
+                            Section::make('Date Information')
+                                ->schema([
                                     Grid::make(2)
                                         ->schema([
+                                            TextEntry::make('eventDate')
+                                                ->label('Event Date')
+                                                ->weight(FontWeight::Bold)
+                                                ->icon('heroicon-o-calendar')
+                                                ->formatStateUsing(fn ($record, $state) => blank($state) && blank($record->created_at) 
+                                                    ? '—' 
+                                                    : Carbon::parse($state ?? $record->created_at)->format('d M Y, H:i')),
                                             TextEntry::make('created_at')
                                                 ->label('Created At')
+                                                ->weight(FontWeight::Bold)
                                                 ->icon('heroicon-o-clock')
-                                                ->dateTime(),
-                                            TextEntry::make('updated_at')
-                                                ->label('Updated At')
-                                                ->icon('heroicon-o-arrow-path')
-                                                ->dateTime(),
+                                                ->formatStateUsing(fn ($state) => blank($state) ? '—' : Carbon::parse($state)->format('d M Y, H:i')),
                                         ]),
                                 ]),
                         ]),

@@ -19,6 +19,7 @@ class DryoffForm
                 EventLogFormHelpers::livestockField()
                     ->preload()
                     ->required(),
+                EventLogFormHelpers::eventDateField(),
                 DatePicker::make('startDate')
                     ->label('Start Date')
                     ->native(false)

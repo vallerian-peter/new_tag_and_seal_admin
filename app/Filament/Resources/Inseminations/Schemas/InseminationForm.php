@@ -25,6 +25,7 @@ class InseminationForm
                 EventLogFormHelpers::livestockField()
                     ->preload()
                     ->required(),
+                EventLogFormHelpers::eventDateField(),
                 DatePicker::make('lastHeatDate')
                     ->label('Last Heat Date')
                     ->native(false)

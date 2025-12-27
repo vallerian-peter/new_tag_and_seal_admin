@@ -20,6 +20,7 @@ class MedicationForm
                 EventLogFormHelpers::uuidField('treatment'),
                 EventLogFormHelpers::farmField(),
                 EventLogFormHelpers::livestockField(),
+                EventLogFormHelpers::eventDateField(),
                 Select::make('diseaseId')
                     ->label('Disease')
                     ->relationship('disease', 'name')

@@ -32,6 +32,7 @@ class VaccinationForm
                 EventLogFormHelpers::livestockField()
                     ->preload()
                     ->required(),
+                EventLogFormHelpers::eventDateField(),
                 Select::make('vaccineUuid')
                     ->label('Vaccine')
                     ->options(function (Get $get) {

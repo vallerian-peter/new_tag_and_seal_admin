@@ -12,6 +12,7 @@ class Milking extends Model
         'uuid',
         'livestockUuid',
         'farmUuid',
+        'eventDate',
         'milkingMethodId',
         'amount',
         'lactometerReading',

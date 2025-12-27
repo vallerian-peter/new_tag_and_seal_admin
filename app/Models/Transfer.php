@@ -11,6 +11,7 @@ class Transfer extends Model
         'uuid',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'toFarmUuid',
         'transporterId',
         'reason',

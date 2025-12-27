@@ -12,6 +12,7 @@ class AbortedPregnancy extends Model
         'uuid',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'abortionDate',
         'reproductiveProblemId',
         'remarks',

@@ -21,6 +21,7 @@ class PregnancyForm
                 EventLogFormHelpers::livestockField()
                     ->preload()
                     ->required(),
+                EventLogFormHelpers::eventDateField(),
                 Select::make('testResultId')
                     ->label('Pregnancy Test Result')
                     ->relationship('testResult', 'name')

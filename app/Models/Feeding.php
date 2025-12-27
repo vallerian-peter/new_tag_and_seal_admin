@@ -12,6 +12,7 @@ class Feeding extends Model
         'feedingTypeId',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'nextFeedingTime',
         'amount',
         'remarks',

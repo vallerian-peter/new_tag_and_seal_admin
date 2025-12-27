@@ -13,6 +13,7 @@ class Deworming extends Model
         'uuid',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'administrationRouteId',
         'medicineId',
         'vetId',

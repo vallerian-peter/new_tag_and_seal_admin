@@ -12,6 +12,7 @@ class Calving extends Model
         'uuid',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'startDate',
         'endDate',
         'calvingTypeId',

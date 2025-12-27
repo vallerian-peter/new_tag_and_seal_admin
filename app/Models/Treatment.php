@@ -19,6 +19,7 @@ class Treatment extends Model
         'withdrawalPeriod',
         'medicationDate',
         'nextMedicationDate',
+        'eventDate',
         'remarks',
     ];
 

@@ -18,6 +18,7 @@ class DisposalForm
                 EventLogFormHelpers::uuidField('disposal'),
                 EventLogFormHelpers::farmField(),
                 EventLogFormHelpers::livestockField(),
+                EventLogFormHelpers::eventDateField(),
                 Select::make('disposalTypeId')
                     ->label('Disposal Type')
                     ->relationship('disposalType', 'name')

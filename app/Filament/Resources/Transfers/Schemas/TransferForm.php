@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Transfers\Schemas;
 
+use App\Filament\Resources\Helpers\EventLogFormHelpers;
 use App\Support\UuidHelper;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
@@ -43,6 +44,7 @@ class TransferForm
                     ->searchable()
                     ->preload()
                     ->required(),
+                EventLogFormHelpers::eventDateField(),
                 TextInput::make('transporterId')
                     ->label('Transporter ID')
                     ->nullable(),

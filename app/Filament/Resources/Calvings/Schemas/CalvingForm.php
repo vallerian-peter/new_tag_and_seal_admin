@@ -21,6 +21,7 @@ class CalvingForm
                 EventLogFormHelpers::livestockField()
                     ->preload()
                     ->required(),
+                EventLogFormHelpers::eventDateField(),
                 DatePicker::make('startDate')
                     ->label('Start Date')
                     ->native(false)

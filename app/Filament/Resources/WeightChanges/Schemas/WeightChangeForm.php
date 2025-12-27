@@ -18,6 +18,7 @@ class WeightChangeForm
                 EventLogFormHelpers::uuidField('weight'),
                 EventLogFormHelpers::farmField(),
                 EventLogFormHelpers::livestockField(),
+                EventLogFormHelpers::eventDateField(),
                 TextInput::make('oldWeight')
                     ->label('Old Weight (kg)')
                     ->numeric()

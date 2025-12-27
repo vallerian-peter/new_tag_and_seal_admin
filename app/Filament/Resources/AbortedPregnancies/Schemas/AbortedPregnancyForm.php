@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\AbortedPregnancies\Schemas;
 
+use App\Filament\Resources\Helpers\EventLogFormHelpers;
 use App\Models\Livestock;
 use App\Support\UuidHelper;
 use Carbon\Carbon;
@@ -76,6 +77,9 @@ class AbortedPregnancyForm
                             ->columnSpan(1)
                             ->disabled(fn (Get $get) => !$get('farmUuid'))
                             ->helperText(fn (Get $get) => !$get('farmUuid') ? 'Please select a farm first' : null),
+                        
+                        EventLogFormHelpers::eventDateField()
+                            ->columnSpanFull(),
                     ])
                     ->columns(2),
                 

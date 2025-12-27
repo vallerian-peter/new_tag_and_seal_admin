@@ -18,6 +18,7 @@ class MilkingForm
                 EventLogFormHelpers::livestockField()
                     ->preload()
                     ->required(),
+                EventLogFormHelpers::eventDateField(),
                 Select::make('milkingMethodId')
                     ->label('Milking Method')
                     ->relationship('milkingMethod', 'name')

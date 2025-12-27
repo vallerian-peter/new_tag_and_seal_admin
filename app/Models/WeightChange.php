@@ -11,6 +11,7 @@ class WeightChange extends Model
         'uuid',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'oldWeight',
         'newWeight',
         'remarks',

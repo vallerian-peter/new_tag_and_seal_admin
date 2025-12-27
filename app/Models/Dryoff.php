@@ -11,6 +11,7 @@ class Dryoff extends Model
         'uuid',
         'farmUuid',
         'livestockUuid',
+        'eventDate',
         'startDate',
         'endDate',
         'reason',

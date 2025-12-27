@@ -56,10 +56,26 @@ class LivestockByTypeChart extends ChartWidget
 
         $data = [];
         foreach ($logs as $key => $model) {
-            $data[$key] = $model::selectRaw('DATE(created_at) as date, COUNT(*) as count')
-                ->whereBetween('created_at', [$startDate->copy()->startOfDay(), $endDate->copy()->endOfDay()])
-                ->groupBy('date')
-                ->pluck('count', 'date');
+            // Use eventDate if available, otherwise fall back to created_at
+            // Get all records in the date range (either by eventDate or created_at)
+            $records = $model::where(function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('eventDate', [$startDate->copy()->startOfDay(), $endDate->copy()->endOfDay()])
+                    ->orWhere(function ($q) use ($startDate, $endDate) {
+                        $q->whereNull('eventDate')
+                          ->whereBetween('created_at', [$startDate->copy()->startOfDay(), $endDate->copy()->endOfDay()]);
+                    });
+            })->get();
+            
+            // Group by date using COALESCE logic
+            $grouped = [];
+            foreach ($records as $record) {
+                $date = $record->eventDate 
+                    ? Carbon::parse($record->eventDate)->format('Y-m-d')
+                    : Carbon::parse($record->created_at)->format('Y-m-d');
+                $grouped[$date] = ($grouped[$date] ?? 0) + 1;
+            }
+            
+            $data[$key] = collect($grouped);
         }
 
         $labels = [];

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Feedings\Schemas;
 
+use App\Filament\Resources\Helpers\EventLogFormHelpers;
 use App\Models\Livestock;
 use App\Support\UuidHelper;
 use Carbon\Carbon;
@@ -73,6 +74,7 @@ class FeedingForm
                     ->searchable()
                     ->preload()
                     ->required(),
+                EventLogFormHelpers::eventDateField(),
                 DateTimePicker::make('nextFeedingTime')
                     ->label('Next Feeding Time')
                     ->afterStateHydrated(function (DateTimePicker $component, $state): void {
