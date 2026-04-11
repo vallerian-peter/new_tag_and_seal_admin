@@ -190,6 +190,27 @@ class BirthEventForm
                             ->default('active')
                             ->required()
                             ->columnSpan(1),
+
+                        TextInput::make('totalBorn')
+                            ->label('Total Born')
+                            ->numeric()
+                            ->minValue(0)
+                            ->nullable()
+                            ->columnSpan(1),
+
+                        TextInput::make('aliveCount')
+                            ->label('Alive Count')
+                            ->numeric()
+                            ->minValue(0)
+                            ->nullable()
+                            ->columnSpan(1),
+
+                        TextInput::make('deadCount')
+                            ->label('Dead Count')
+                            ->numeric()
+                            ->minValue(0)
+                            ->nullable()
+                            ->columnSpan(1),
                         
                         Textarea::make('remarks')
                             ->label('Remarks')

@@ -67,6 +67,18 @@ class BirthEventsTable
                     ->label('Birth Type')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('totalBorn')
+                    ->label('Total Born')
+                    ->numeric()
+                    ->toggleable(),
+                TextColumn::make('aliveCount')
+                    ->label('Alive')
+                    ->numeric()
+                    ->toggleable(),
+                TextColumn::make('deadCount')
+                    ->label('Dead')
+                    ->numeric()
+                    ->toggleable(),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()

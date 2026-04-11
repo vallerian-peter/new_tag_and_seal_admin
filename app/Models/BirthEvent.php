@@ -12,10 +12,10 @@ class BirthEvent extends Model
 
     protected $fillable = [
         'uuid',
+        'eventDate',
         'farmUuid',
         'livestockUuid',
         'eventType', // 'calving' or 'farrowing'
-        'eventDate',
         'startDate',
         'endDate',
         'birthTypeId',
@@ -23,6 +23,15 @@ class BirthEvent extends Model
         'reproductiveProblemId',
         'remarks',
         'status',
+        'totalBorn',
+        'aliveCount',
+        'deadCount',
+    ];
+
+    protected $casts = [
+        'totalBorn' => 'integer',
+        'aliveCount' => 'integer',
+        'deadCount' => 'integer',
     ];
 
     protected static function booted(): void
@@ -68,6 +77,11 @@ class BirthEvent extends Model
     public function livestock(): BelongsTo
     {
         return $this->belongsTo(Livestock::class, 'livestockUuid', 'uuid');
+    }
+
+    public function offspring()
+    {
+        return $this->hasMany(Livestock::class, 'birthEventUuid', 'uuid');
     }
 
     /**

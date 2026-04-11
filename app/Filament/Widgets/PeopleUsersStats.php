@@ -2,8 +2,8 @@
 
 namespace App\Filament\Widgets;
 
+use App\Models\Farm;
 use App\Models\Farmer;
-use App\Models\SystemUser;
 use App\Models\User;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -28,13 +28,14 @@ class PeopleUsersStats extends BaseWidget
                 ->color('info')
                 ->url(route('filament.admin.resources.farmers.index'))
                 ->icon('heroicon-o-user-group'),
-                
-            Stat::make('System Users', SystemUser::count())
-                ->description('Admin and staff profiles')
-                ->descriptionIcon('heroicon-o-shield-check')
+
+            Stat::make('Farms', Farm::count())
+                ->description('Registered farms in the system')
+                ->descriptionIcon('heroicon-o-building-storefront')
                 ->color('warning')
-                ->url(route('filament.admin.resources.system-users.index'))
-                ->icon('heroicon-o-shield-check'),
+                ->url(route('filament.admin.resources.farms.index'))
+                ->icon('heroicon-o-building-storefront'),
+
         ];
     }
 }

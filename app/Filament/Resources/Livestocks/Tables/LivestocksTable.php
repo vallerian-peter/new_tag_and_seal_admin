@@ -9,7 +9,13 @@ use App\Models\Deworming;
 use App\Models\Disposal;
 use App\Models\Dryoff;
 use App\Models\Feeding;
+use App\Models\IdentificationEvent;
 use App\Models\Insemination;
+use App\Models\IronInjection;
+use App\Models\LivestockMarking;
+use App\Models\StageChange;
+use App\Models\TailDocking;
+use App\Models\TeethClipping;
 use App\Models\Treatment;
 use App\Models\Milking;
 use App\Models\Pregnancy;
@@ -78,6 +84,17 @@ class LivestocksTable
                     ->label('Weight (kg)')
                     ->numeric()
                     ->sortable()
+                    ->toggleable(),
+                TextColumn::make('stage.name')
+                    ->label('Stage')
+                    ->searchable()
+                    ->sortable()
+                    ->toggleable(),
+                TextColumn::make('isIdentified')
+                    ->label('Identified')
+                    ->badge()
+                    ->formatStateUsing(fn ($state) => $state ? 'Yes' : 'No')
+                    ->color(fn ($state) => $state ? 'success' : 'warning')
                     ->toggleable(),
                 TextColumn::make('primaryColor')
                     ->label('Primary Color')
@@ -159,5 +176,11 @@ class LivestocksTable
         $deletedCount += Disposal::where('livestockUuid', $livestockUuid)->delete();
         $deletedCount += Transfer::where('livestockUuid', $livestockUuid)->delete();
         $deletedCount += Calving::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += TeethClipping::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += TailDocking::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += IronInjection::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += LivestockMarking::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += StageChange::where('livestockUuid', $livestockUuid)->delete();
+        $deletedCount += IdentificationEvent::where('livestockUuid', $livestockUuid)->delete();
     }
 }

@@ -8,6 +8,7 @@ use App\Filament\Widgets\CustomAccountWidget;
 use App\Filament\Widgets\LivestockByTypeChart;
 use App\Filament\Widgets\LivestockDataStats;
 use App\Filament\Widgets\PeopleUsersStats;
+use App\Http\Controllers\Filament\IncomeExpenditureReportPdfController;
 use Filament\Actions\Action;
 use Filament\Auth\Http\Responses\Contracts\LogoutResponse;
 use Filament\Facades\Filament;
@@ -29,6 +30,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Illuminate\Support\Facades\Route;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -64,6 +66,8 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make('Geographical')
                     ->collapsed(false),
                 NavigationGroup::make('People & Users')
+                    ->collapsed(false),
+                NavigationGroup::make('Bills and Report')
                     ->collapsed(false),
                 NavigationGroup::make('Logs & Events')
                     ->collapsed(false),
@@ -127,6 +131,10 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->authMiddleware([
                 Authenticate::class,
-            ]);
+            ])
+            ->routes(function (): void {
+                Route::get('/reports/income-expenditure/pdf', IncomeExpenditureReportPdfController::class)
+                    ->name('reports.income-expenditure.pdf');
+            });
     }
 }

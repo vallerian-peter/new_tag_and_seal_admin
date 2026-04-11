@@ -15,6 +15,9 @@ class Disposal extends Model
         'disposalTypeId',
         'reasons',
         'remarks',
+        'saleWeight',
+        'salePrice',
+        'buyerName',
         'status',
     ];
 

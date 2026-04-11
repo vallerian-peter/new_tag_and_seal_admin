@@ -4,19 +4,14 @@ namespace App\Filament\Widgets;
 
 use App\Models\AbortedPregnancy;
 use App\Models\BirthEvent;
-use App\Models\Breed;
 use App\Models\Deworming;
 use App\Models\Disposal;
 use App\Models\Dryoff;
-use App\Models\Farm;
 use App\Models\Feeding;
 use App\Models\Insemination;
-use App\Models\Livestock;
-use App\Models\LivestockType;
 use App\Models\Treatment;
 use App\Models\Milking;
 use App\Models\Pregnancy;
-use App\Models\Specie;
 use App\Models\Transfer;
 use App\Models\Vaccination;
 use App\Models\WeightChange;
@@ -30,41 +25,6 @@ class LivestockDataStats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Farms', Farm::count())
-                ->description('Registered farms in the system')
-                ->descriptionIcon('heroicon-o-building-storefront')
-                ->color('success')
-                ->url(route('filament.admin.resources.farms.index'))
-                ->icon('heroicon-o-building-storefront'),
-
-            Stat::make('Livestock', Livestock::count())
-                ->description('All livestock records')
-                ->descriptionIcon('heroicon-o-cube')
-                ->color('info')
-                ->url(route('filament.admin.resources.livestocks.index'))
-                ->icon('heroicon-o-cube'),
-
-            Stat::make('Breeds', Breed::count())
-                ->description('Registered livestock breeds')
-                ->descriptionIcon('heroicon-o-tag')
-                ->color('warning')
-                ->url(route('filament.admin.resources.breeds.index'))
-                ->icon('heroicon-o-tag'),
-
-            Stat::make('Species', Specie::count())
-                ->description('Livestock species types')
-                ->descriptionIcon('heroicon-o-beaker')
-                ->color('danger')
-                ->url(route('filament.admin.resources.species.index'))
-                ->icon('heroicon-o-beaker'),
-
-            Stat::make('Livestock Types', LivestockType::count())
-                ->description('Types of livestock')
-                ->descriptionIcon('heroicon-o-squares-plus')
-                ->color('info')
-                ->url(route('filament.admin.resources.livestock-types.index'))
-                ->icon('heroicon-o-squares-plus'),
-
             Stat::make('Feedings', Feeding::count())
                 ->description('Feeding logs')
                 ->descriptionIcon('heroicon-o-beaker')

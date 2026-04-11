@@ -24,6 +24,9 @@ class Livestock extends Model
         'dateOfBirth',
         'motherUuid',  // Mother livestock UUID reference
         'fatherUuid',  // Father livestock UUID reference
+        'birthEventUuid',
+        'stageId',
+        'isIdentified',
         'gender',
         'breedId',
         'speciesId',
@@ -40,6 +43,7 @@ class Livestock extends Model
     protected $casts = [
         'dateOfBirth' => 'date',
         'dateFirstEnteredToFarm' => 'date',
+        'isIdentified' => 'boolean',
     ];
 
     protected static function booted(): void
@@ -100,5 +104,20 @@ class Livestock extends Model
     public function livestockObtainedMethod()
     {
         return $this->belongsTo(LivestockObtainedMethod::class, 'livestockObtainedMethodId');
+    }
+
+    public function birthEventAsOffspring()
+    {
+        return $this->belongsTo(BirthEvent::class, 'birthEventUuid', 'uuid');
+    }
+
+    public function stage()
+    {
+        return $this->belongsTo(Stage::class, 'stageId');
+    }
+
+    public function birthEvents()
+    {
+        return $this->hasMany(BirthEvent::class, 'livestockUuid', 'uuid');
     }
 }

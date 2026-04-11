@@ -27,7 +27,7 @@ class LivestockForm
                     ->readOnly()
                     ->required(),
                 TextInput::make('identificationNumber')
-                    ->required(),
+                    ->nullable(),
                 TextInput::make('dummyTagId')
                     ->default(null),
                 TextInput::make('barcodeTagId')
@@ -58,6 +58,26 @@ class LivestockForm
                     ->searchable()
                     ->preload()
                     ->nullable(),
+                Select::make('birthEventUuid')
+                    ->label('Birth Event')
+                    ->relationship('birthEventAsOffspring', 'uuid')
+                    ->searchable()
+                    ->preload()
+                    ->nullable(),
+                Select::make('stageId')
+                    ->label('Stage')
+                    ->relationship('stage', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->nullable(),
+                Select::make('isIdentified')
+                    ->label('Identified')
+                    ->options([
+                        1 => 'Yes',
+                        0 => 'No',
+                    ])
+                    ->default(1)
+                    ->required(),
                 Select::make('gender')
                     ->options(['male' => 'Male', 'female' => 'Female'])
                     ->required(),
