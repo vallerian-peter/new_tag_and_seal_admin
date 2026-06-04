@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\LivestockMarkings\Schemas;
 
 use App\Filament\Resources\Helpers\EventLogFormHelpers;
+use App\Models\LivestockMarkingType;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
@@ -18,18 +19,12 @@ class LivestockMarkingForm
             EventLogFormHelpers::eventDateField(),
             Select::make('markingType')
                 ->label('Marking Type')
-                ->options([
-                    'ear_tag' => 'Ear Tag',
-                    'tattoo' => 'Tattoo',
-                    'branding' => 'Branding',
-                    'paint' => 'Paint',
-                    'other' => 'Other',
-                ])
-                ->default('other')
+                ->options(fn () => LivestockMarkingType::query()->orderBy('name')->pluck('name', 'name')->toArray())
+                ->searchable()
+                ->preload()
                 ->required(),
             Textarea::make('description')->label('Description')->rows(2)->nullable(),
             Textarea::make('notes')->label('Notes')->rows(3)->nullable(),
         ]);
     }
 }
-
