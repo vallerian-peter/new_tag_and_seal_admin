@@ -23,6 +23,10 @@ class SpeciesTable
                     ->label('Species Name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('livestockType.name')
+                    ->label('Livestock Type')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime()

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Species\Schemas;
 
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 
@@ -12,6 +13,12 @@ class SpecieForm
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->required(),
+                Select::make('livestockTypeId')
+                    ->label('Livestock Type')
+                    ->relationship('livestockType', 'name')
+                    ->searchable()
+                    ->preload()
                     ->required(),
             ]);
     }
