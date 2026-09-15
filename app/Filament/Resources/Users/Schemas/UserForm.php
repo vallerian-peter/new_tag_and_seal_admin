@@ -3,11 +3,16 @@
 namespace App\Filament\Resources\Users\Schemas;
 
 use App\Enums\UserRole;
+use App\Models\ExtensionOfficer;
+use App\Models\Farmer;
+use App\Models\FarmUser;
+use App\Models\SystemUser;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
+use Filament\Schemas\Components\Placeholder;
+use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 
 class UserForm
@@ -62,30 +67,57 @@ class UserForm
                     ->columns(2),
 
                 Section::make('Profile Information')
-                    ->description('Complete the profile for the selected role')
+                    ->description('Linked profile reference for the selected role')
                     ->schema([
-                        // Show note about creating profile first
-                        \Filament\Forms\Components\Placeholder::make('profile_note')
+                        Placeholder::make('profile_note')
                             ->label('Important')
-                            ->content('You must create the profile (Farmer or System User) first, then come back to create the User account with the profile ID as roleId.')
+                            ->content('Select the corresponding person profile to link to this login account.')
                             ->visible(fn (Get $get) => filled($get('role'))),
 
-                        TextInput::make('roleId')
+                        Select::make('roleId')
                             ->label(fn (Get $get) => match ($get('role')) {
-                                UserRole::FARMER => 'Farmer Profile ID',
-                                UserRole::SYSTEM_USER, UserRole::EXTENSION_OFFICER, UserRole::VET, UserRole::FARM_INVITED_USER => 'System User Profile ID',
-                                default => 'Profile ID',
+                                UserRole::FARMER => 'Farmer Profile',
+                                UserRole::EXTENSION_OFFICER => 'Extension Officer Profile',
+                                UserRole::FARM_INVITED_USER => 'Farm User Profile',
+                                UserRole::SYSTEM_USER, UserRole::VET => 'System User Profile',
+                                default => 'Linked Profile',
                             })
+                            ->options(function (Get $get) {
+                                $role = $get('role');
+                                return match ($role) {
+                                    UserRole::FARMER => Farmer::query()
+                                        ->get()
+                                        ->mapWithKeys(fn ($f) => [
+                                            $f->id => trim("{$f->firstName} {$f->middleName} {$f->surname}") . ($f->phone1 ? " ({$f->phone1})" : ''),
+                                        ])
+                                        ->toArray(),
+                                    UserRole::EXTENSION_OFFICER => ExtensionOfficer::query()
+                                        ->get()
+                                        ->mapWithKeys(fn ($e) => [
+                                            $e->id => trim("{$e->firstName} {$e->lastName}") . ($e->phone ? " ({$e->phone})" : ''),
+                                        ])
+                                        ->toArray(),
+                                    UserRole::FARM_INVITED_USER => FarmUser::query()
+                                        ->get()
+                                        ->mapWithKeys(fn ($fu) => [
+                                            $fu->id => trim("{$fu->firstName} {$fu->middleName} {$fu->lastName}") . ($fu->phone ? " ({$fu->phone})" : ''),
+                                        ])
+                                        ->toArray(),
+                                    UserRole::SYSTEM_USER, UserRole::VET => SystemUser::query()
+                                        ->get()
+                                        ->mapWithKeys(fn ($s) => [
+                                            $s->id => trim("{$s->firstName} {$s->lastName}") . ($s->phone ? " ({$s->phone})" : ''),
+                                        ])
+                                        ->toArray(),
+                                    default => [],
+                                };
+                            })
+                            ->searchable()
+                            ->preload()
                             ->required()
-                            ->numeric()
-                            ->helperText(fn (Get $get) => match ($get('role')) {
-                                UserRole::FARMER => 'Enter the ID from the Farmers table',
-                                UserRole::SYSTEM_USER, UserRole::EXTENSION_OFFICER, UserRole::VET, UserRole::FARM_INVITED_USER => 'Create a System User profile first, then enter its ID here',
-                                default => 'Select a role first',
-                            })
-                            ->visible(fn (Get $get) => filled($get('role'))),
+                            ->visible(fn (Get $get) => filled($get('role')))
+                            ->helperText('Select the corresponding profile to link to this login user account.'),
                     ])
-                    ->collapsible(),
             ]);
     }
 }

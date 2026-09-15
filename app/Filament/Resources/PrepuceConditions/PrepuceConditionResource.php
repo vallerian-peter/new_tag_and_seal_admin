@@ -5,6 +5,7 @@ namespace App\Filament\Resources\PrepuceConditions;
 use App\Filament\Resources\PrepuceConditions\Pages\CreatePrepuceCondition;
 use App\Filament\Resources\PrepuceConditions\Pages\EditPrepuceCondition;
 use App\Filament\Resources\PrepuceConditions\Pages\ListPrepuceConditions;
+use App\Filament\Resources\PrepuceConditions\Pages\ViewPrepuceCondition;
 use App\Filament\Resources\PrepuceConditions\Schemas\PrepuceConditionForm;
 use App\Filament\Resources\PrepuceConditions\Tables\PrepuceConditionsTable;
 use App\Models\PrepuceCondition;
@@ -33,7 +34,7 @@ class PrepuceConditionResource extends Resource
 
     protected static ?int $navigationSort = 18;
 
-    protected static ?string $recordTitleAttribute = 'uuid';
+    protected static ?string $recordTitleAttribute = 'id';
 
     public static function getGlobalSearchResultTitle(Model $record): string|Htmlable
     {
@@ -47,7 +48,7 @@ class PrepuceConditionResource extends Resource
 
     public static function getGlobalSearchResultUrl(Model $record): string
     {
-        return static::getUrl('index');
+        return static::getUrl('view', ['record' => $record]);
     }
 
     public static function getGloballySearchableAttributes(): array
@@ -107,6 +108,7 @@ class PrepuceConditionResource extends Resource
         return [
             'index' => ListPrepuceConditions::route('/'),
             'create' => CreatePrepuceCondition::route('/create'),
+            'view' => ViewPrepuceCondition::route('/{record}'),
             'edit' => EditPrepuceCondition::route('/{record}/edit'),
         ];
     }

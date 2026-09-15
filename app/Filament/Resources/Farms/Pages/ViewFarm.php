@@ -19,10 +19,6 @@ class ViewFarm extends ViewRecord
                 Section::make('Farm Basic Information')
                     ->description('Core farm details and identifiers')
                     ->schema([
-                        TextEntry::make('uuid')
-                            ->label('Farm UUID')
-                            ->icon('heroicon-o-key')
-                            ->copyable(),
                         TextEntry::make('referenceNo')
                             ->label('Reference Number')
                             ->icon('heroicon-o-document-text')
@@ -99,8 +95,7 @@ class ViewFarm extends ViewRecord
                             ->icon('heroicon-o-map')
                             ->columnSpanFull(),
                     ])
-                    ->columns(2)
-                    ->collapsible(),
+                    ->columns(2),
 
                 Section::make('Location Hierarchy')
                     ->description('Administrative location details')
@@ -152,9 +147,7 @@ class ViewFarm extends ViewRecord
                             ->icon('heroicon-o-home')
                             ->placeholder('N/A'),
                     ])
-                    ->columns(5)
-                    ->collapsible()
-                    ->collapsed(),
+                    ->columns(5),
 
                 Section::make('System Timestamps')
                     ->description('Record creation and modification dates')
@@ -168,9 +161,7 @@ class ViewFarm extends ViewRecord
                             ->dateTime('M d, Y h:i A')
                             ->icon('heroicon-o-arrow-path'),
                     ])
-                    ->columns(2)
-                    ->collapsible()
-                    ->collapsed(),
+                    ->columns(2),
             ]);
     }
 }

@@ -28,10 +28,6 @@ class DewormingsTable
                 TextColumn::make('#')
                     ->label('#')
                     ->rowIndex(),
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->searchable()
-                    ->toggleable(),
                 TextColumn::make('farm.name')
                     ->label('Farm')
                     ->searchable()
@@ -100,7 +96,7 @@ class DewormingsTable
                     ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
             ])
             ->filters([
                 //
@@ -119,11 +115,6 @@ class DewormingsTable
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
-                                            TextEntry::make('uuid')
-                                                ->label('UUID')
-                                                ->weight(FontWeight::Bold)
-                                                ->copyable()
-                                                ->columnSpan(2),
                                             TextEntry::make('farm.name')
                                                 ->label('Farm')
                                                 ->weight(FontWeight::Bold)

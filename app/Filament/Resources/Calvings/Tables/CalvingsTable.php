@@ -54,10 +54,10 @@ class CalvingsTable
                     ->label('Status')
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
             ])
             ->filters([])
             ->recordActions([
@@ -70,9 +70,6 @@ class CalvingsTable
                         ->modalCancelActionLabel('Close')
                         ->modalWidth('lg')
                         ->infolist([
-                            TextEntry::make('uuid')
-                                ->label('UUID')
-                                ->weight(FontWeight::Bold),
                             TextEntry::make('farm.name')
                                 ->label('Farm')
                                 ->weight(FontWeight::Bold),

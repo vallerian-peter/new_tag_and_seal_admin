@@ -20,11 +20,6 @@ class FinanceIncomesTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('#')->label('#')->rowIndex(),
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->searchable()
-                    ->copyable()
-                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('sourceType')
                     ->label('Source Type')
                     ->badge()
@@ -33,11 +28,19 @@ class FinanceIncomesTable
                     ->label('Farm')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('farmer')
+                TextColumn::make('farmer.full_name')
                     ->label('Farmer')
-                    ->state(fn ($record) => trim(($record->farmer?->firstName ?? '').' '.($record->farmer?->surname ?? '')))
+                    ->state(fn ($record) => trim(($record->farmer?->firstName ?? $record->farm?->farmer?->firstName ?? '').' '.($record->farmer?->surname ?? $record->farm?->farmer?->surname ?? '')))
                     ->placeholder('—')
-                    ->searchable(['farmer.firstName', 'farmer.surname']),
+                    ->searchable(query: function ($query, string $search) {
+                        return $query->where(function ($sub) use ($search) {
+                            $sub->whereHas('farmer', function ($q) use ($search) {
+                                $q->whereRaw("CONCAT(COALESCE(firstName, ''), ' ', COALESCE(middleName, ''), ' ', COALESCE(surname, '')) LIKE ?", ["%{$search}%"]);
+                            })->orWhereHas('farm.farmer', function ($q) use ($search) {
+                                $q->whereRaw("CONCAT(COALESCE(firstName, ''), ' ', COALESCE(middleName, ''), ' ', COALESCE(surname, '')) LIKE ?", ["%{$search}%"]);
+                            });
+                        });
+                    }),
                 TextColumn::make('referenceNo')
                     ->label('Reference No')
                     ->searchable()
@@ -67,7 +70,7 @@ class FinanceIncomesTable
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable(),
             ])

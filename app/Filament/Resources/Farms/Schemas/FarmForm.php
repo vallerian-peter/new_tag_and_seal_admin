@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Farms\Schemas;
 
 use App\Support\UuidHelper;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
@@ -20,10 +21,8 @@ class FarmForm
                     ->searchable()
                     ->preload()
                     ->required(),
-                TextInput::make('uuid')
-                    ->label('UUID')
+                Hidden::make('uuid')
                     ->default(fn () => UuidHelper::generate())
-                    ->readOnly()
                     ->required(),
                 TextInput::make('referenceNo')
                     ->required(),

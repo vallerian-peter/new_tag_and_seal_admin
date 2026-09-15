@@ -25,40 +25,50 @@ class WeightChangesTable
                 TextColumn::make('#')
                     ->label('#')
                     ->rowIndex(),
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->searchable()
-                    ->toggleable(),
                 TextColumn::make('farm.name')
                     ->label('Farm')
                     ->searchable()
                     ->sortable()
-                    ->toggleable(),
+                    ->weight(FontWeight::Bold),
                 TextColumn::make('livestock.identificationNumber')
-                    ->label('Livestock Tag')
+                    ->label('Livestock')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('eventDate')
                     ->label('Event Date')
                     ->dateTime()
-                    ->sortable()
-                    ->formatStateUsing(fn ($record, $state) => $state ?? $record->created_at),
-                TextColumn::make('oldWeight')
-                    ->label('Old Weight (kg)')
-                    ->numeric()
                     ->sortable(),
-                TextColumn::make('newWeight')
-                    ->label('New Weight (kg)')
-                    ->numeric()
+                TextColumn::make('previousWeight')
+                    ->label('Previous (kg)')
+                    ->numeric(decimalPlaces: 2)
                     ->sortable(),
+                TextColumn::make('currentWeight')
+                    ->label('Current (kg)')
+                    ->numeric(decimalPlaces: 2)
+                    ->sortable(),
+                TextColumn::make('weightDifference')
+                    ->label('Difference (kg)')
+                    ->getStateUsing(fn ($record) => $record->currentWeight - $record->previousWeight)
+                    ->numeric(decimalPlaces: 2)
+                    ->badge()
+                    ->color(fn ($state) => $state >= 0 ? 'success' : 'danger'),
                 TextColumn::make('created_at')
-                    ->label('Recorded At')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
             ])
             ->filters([
-                //
+                SelectFilter::make('farmUuid')
+                    ->label('Farm')
+                    ->relationship('farm', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('livestockUuid')
+                    ->label('Livestock')
+                    ->relationship('livestock', 'identificationNumber')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -74,11 +84,6 @@ class WeightChangesTable
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
-                                            TextEntry::make('uuid')
-                                                ->label('UUID')
-                                                ->weight(FontWeight::Bold)
-                                                ->copyable()
-                                                ->columnSpan(2),
                                             TextEntry::make('farm.name')
                                                 ->label('Farm')
                                                 ->weight(FontWeight::Bold)

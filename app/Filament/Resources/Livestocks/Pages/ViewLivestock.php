@@ -7,6 +7,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\HtmlString;
 
 class ViewLivestock extends ViewRecord
 {
@@ -19,10 +20,6 @@ class ViewLivestock extends ViewRecord
                 Section::make('Livestock Identification')
                     ->description('Tags and identification numbers')
                     ->schema([
-                        TextEntry::make('uuid')
-                            ->label('Livestock UUID')
-                            ->icon('heroicon-o-key')
-                            ->copyable(),
                         TextEntry::make('identificationNumber')
                             ->label('Identification Number')
                             ->icon('heroicon-o-hashtag')
@@ -49,10 +46,10 @@ class ViewLivestock extends ViewRecord
                             ->size('lg')
                             ->weight('bold')
                             ->color('success'),
-                        TextEntry::make('farmUuid')
-                            ->label('Farm UUID')
+                        TextEntry::make('farm.name')
+                            ->label('Farm')
                             ->icon('heroicon-o-building-storefront')
-                            ->copyable(),
+                            ->placeholder('N/A'),
                         TextEntry::make('dateOfBirth')
                             ->label('Date of Birth')
                             ->date()
@@ -80,41 +77,44 @@ class ViewLivestock extends ViewRecord
                 Section::make('Classification')
                     ->description('Species, breed, and type')
                     ->schema([
-                        TextEntry::make('speciesId')
-                            ->label('Species ID')
-                            ->icon('heroicon-o-beaker'),
-                        TextEntry::make('breedId')
-                            ->label('Breed ID')
-                            ->icon('heroicon-o-tag'),
-                        TextEntry::make('livestockTypeId')
-                            ->label('Livestock Type ID')
-                            ->icon('heroicon-o-squares-plus'),
+                        TextEntry::make('species.name')
+                            ->label('Species')
+                            ->icon('heroicon-o-beaker')
+                            ->placeholder('N/A'),
+                        TextEntry::make('breed.name')
+                            ->label('Breed')
+                            ->icon('heroicon-o-tag')
+                            ->placeholder('N/A'),
+                        TextEntry::make('livestockType.name')
+                            ->label('Livestock Type')
+                            ->icon('heroicon-o-squares-plus')
+                            ->placeholder('N/A'),
                     ])
                     ->columns(3),
 
                 Section::make('Parentage')
                     ->description('Mother and father livestock')
                     ->schema([
-                        TextEntry::make('motherUuid')
-                            ->label('Mother UUID')
+                        TextEntry::make('mother.identificationNumber')
+                            ->label('Mother Identification Number')
+                            ->formatStateUsing(fn ($record) => $record->mother ? ($record->mother->identificationNumber ?? $record->mother->name ?? 'Unknown') : 'Unknown')
                             ->icon('heroicon-o-user')
-                            ->copyable()
                             ->placeholder('Unknown'),
-                        TextEntry::make('fatherUuid')
-                            ->label('Father UUID')
+                        TextEntry::make('father.identificationNumber')
+                            ->label('Father Identification Number')
+                            ->formatStateUsing(fn ($record) => $record->father ? ($record->father->identificationNumber ?? $record->father->name ?? 'Unknown') : 'Unknown')
                             ->icon('heroicon-o-user')
-                            ->copyable()
                             ->placeholder('Unknown'),
                     ])
-                    ->columns(2)
-                    ->collapsible(),
+                    ->columns(2),
 
                 Section::make('Acquisition Details')
                     ->description('How and when livestock joined the farm')
                     ->schema([
-                        TextEntry::make('livestockObtainedMethodId')
-                            ->label('Acquisition Method ID')
-                            ->icon('heroicon-o-arrow-path'),
+                        TextEntry::make('livestockObtainedMethod.name')
+                            ->label('Acquisition Method')
+                            ->icon('heroicon-o-arrow-path')
+                            ->placeholder('N/A'),
                         TextEntry::make('dateFirstEnteredToFarm')
                             ->label('Date Entered Farm')
                             ->date()
@@ -124,27 +124,21 @@ class ViewLivestock extends ViewRecord
                             ->suffix(' kg')
                             ->icon('heroicon-o-scale'),
                     ])
-                    ->columns(3)
-                    ->collapsible(),
+                    ->columns(3),
 
                 Section::make('Color Information')
                     ->description('Primary and secondary colors')
                     ->schema([
                         TextEntry::make('primaryColor')
                             ->label('Primary Color')
-                            ->badge()
-                            ->color('info')
-                            ->icon('heroicon-o-paint-brush')
-                            ->placeholder('Not specified'),
+                            ->html()
+                            ->formatStateUsing(fn (?string $state) => self::renderColorBadge($state)),
                         TextEntry::make('secondaryColor')
                             ->label('Secondary Color')
-                            ->badge()
-                            ->color('warning')
-                            ->icon('heroicon-o-swatch')
-                            ->placeholder('Not specified'),
+                            ->html()
+                            ->formatStateUsing(fn (?string $state) => self::renderColorBadge($state)),
                     ])
-                    ->columns(2)
-                    ->collapsible(),
+                    ->columns(2),
 
                 Section::make('System Timestamps')
                     ->description('Record creation and modification dates')
@@ -158,10 +152,52 @@ class ViewLivestock extends ViewRecord
                             ->dateTime('M d, Y h:i A')
                             ->icon('heroicon-o-arrow-path'),
                     ])
-                    ->columns(2)
-                    ->collapsible()
-                    ->collapsed(),
+                    ->columns(2),
             ]);
+    }
+
+    /**
+     * Render a color badge with a small circular swatch placed behind (first) and followed forward by the color name.
+     */
+    public static function renderColorBadge(?string $state): HtmlString
+    {
+        if (blank($state)) {
+            return new HtmlString('<span style="color: #9ca3af; font-style: italic; font-size: 0.875rem;">Not specified</span>');
+        }
+
+        $colorMap = [
+            'red' => '#ef4444',
+            'green' => '#22c55e',
+            'blue' => '#3b82f6',
+            'black' => '#18181b',
+            'white' => '#ffffff',
+            'brown' => '#78350f',
+            'yellow' => '#eab308',
+            'orange' => '#f97316',
+            'pink' => '#ec4899',
+            'gray' => '#6b7280',
+            'grey' => '#6b7280',
+            'purple' => '#a855f7',
+            'tan' => '#d2b48c',
+            'beige' => '#f5f5dc',
+            'cream' => '#fef08a',
+            'gold' => '#eab308',
+            'silver' => '#cbd5e1',
+            'mixed' => 'conic-gradient(#ef4444, #3b82f6, #22c55e, #eab308, #ef4444)',
+        ];
+
+        $key = strtolower(trim($state));
+        $name = ucfirst($state);
+        $bg = $colorMap[$key] ?? (preg_match('/^#[a-f0-9]{3,6}$/i', $state) ? $state : '#9ca3af');
+        $isWhiteOrLight = in_array($key, ['white', 'cream', 'beige']);
+        $borderColor = $isWhiteOrLight ? 'rgba(0,0,0,0.35)' : 'rgba(0,0,0,0.2)';
+
+        return new HtmlString(
+            '<span style="display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; border-radius: 9999px; background-color: rgba(156, 163, 175, 0.12); border: 1px solid rgba(156, 163, 175, 0.25); font-size: 0.875rem; font-weight: 500;">' .
+                '<span style="display: inline-block; width: 14px; height: 14px; border-radius: 50%; background: ' . $bg . '; border: 1.5px solid ' . $borderColor . '; box-shadow: 0 1px 2px rgba(0,0,0,0.15); flex-shrink: 0;"></span>' .
+                '<span>' . e($name) . '</span>' .
+            '</span>'
+        );
     }
 }
 

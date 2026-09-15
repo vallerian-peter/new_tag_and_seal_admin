@@ -31,7 +31,7 @@ class WardsTable
                     ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
                 TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime()

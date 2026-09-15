@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TeethClippings\Tables;
 
+use App\Models\TeethClippingMethod;
 use Carbon\Carbon;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -25,12 +26,11 @@ class TeethClippingsTable
             ->defaultSort('eventDate', 'desc')
             ->columns([
                 TextColumn::make('#')->label('#')->rowIndex(),
-                TextColumn::make('uuid')->label('UUID')->searchable()->toggleable(),
                 TextColumn::make('farm.name')->label('Farm')->searchable()->sortable(),
                 TextColumn::make('livestock.identificationNumber')->label('Livestock Tag')->searchable()->sortable(),
                 TextColumn::make('eventDate')->label('Event Date')->dateTime()->sortable()->formatStateUsing(fn ($record, $state) => $state ?? $record->created_at),
                 TextColumn::make('method')->label('Method')->searchable()->badge()->toggleable(),
-                TextColumn::make('created_at')->label('Created At')->dateTime()->sortable()->toggleable(),
+                TextColumn::make('created_at')->label('Created At')->dateTime()->sortable(),
             ])
             ->filters([
                 SelectFilter::make('farmUuid')
@@ -45,7 +45,7 @@ class TeethClippingsTable
                     ->preload(),
                 SelectFilter::make('method')
                     ->label('Method')
-                    ->options(fn ($query) => $query->clone()->select('method')->whereNotNull('method')->distinct()->pluck('method', 'method')->toArray()),
+                    ->options(fn () => TeethClippingMethod::query()->orderBy('name')->pluck('name', 'name')->toArray()),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -60,7 +60,6 @@ class TeethClippingsTable
                             Section::make('Basic Information')
                                 ->schema([
                                     Grid::make(2)->schema([
-                                        TextEntry::make('uuid')->label('UUID')->weight(FontWeight::Bold)->copyable()->columnSpan(2),
                                         TextEntry::make('farm.name')->label('Farm')->weight(FontWeight::Bold)->icon('heroicon-o-home'),
                                         TextEntry::make('livestock.identificationNumber')->label('Livestock Tag')->weight(FontWeight::Bold)->icon('heroicon-o-tag'),
                                     ]),

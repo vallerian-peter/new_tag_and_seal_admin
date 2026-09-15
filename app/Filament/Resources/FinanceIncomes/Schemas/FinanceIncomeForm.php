@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources\FinanceIncomes\Schemas;
 
+use App\Support\UuidHelper;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -14,21 +16,17 @@ class FinanceIncomeForm
     {
         return $schema
             ->components([
-                TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(255)
-                    ->disabledOn('edit'),
+                Hidden::make('uuid')
+                    ->default(fn () => UuidHelper::generate())
+                    ->required(),
                 TextInput::make('sourceType')
                     ->label('Source Type')
                     ->maxLength(255),
-                TextInput::make('sourceUuid')
-                    ->label('Source UUID')
-                    ->maxLength(255),
+                Hidden::make('sourceUuid'),
                 Select::make('farmUuid')
                     ->label('Farm')
                     ->relationship('farm', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?? $record->uuid) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?: ($record->referenceNo ?: 'Farm #' . $record->id)) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
                     ->searchable()
                     ->preload(),
                 Select::make('farmerId')

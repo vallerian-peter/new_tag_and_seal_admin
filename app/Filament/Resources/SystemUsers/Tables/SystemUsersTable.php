@@ -5,9 +5,10 @@ namespace App\Filament\Resources\SystemUsers\Tables;
 use App\Enums\UserRole;
 use App\Models\User;
 use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -39,16 +40,16 @@ class SystemUsersTable
                     ->searchable()
                     ->limit(50)
                     ->toggleable(),
-                TextColumn::make('createdBy')
+                TextColumn::make('creator.username')
                     ->label('Created By')
-                    ->numeric()
+                    ->formatStateUsing(fn ($record) => $record->creator?->getFilamentName() ?? $record->creator?->username ?? 'System')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
                 TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime()
@@ -59,6 +60,7 @@ class SystemUsersTable
                 //
             ])
             ->recordActions([
+                ViewAction::make(),
                 EditAction::make(),
                 DeleteAction::make()
                     ->before(function ($record) {

@@ -24,10 +24,10 @@ class HeatTypesTable
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
                 TextColumn::make('updated_at')
                     ->label('Updated')
                     ->dateTime()

@@ -26,44 +26,56 @@ class FeedingsTable
                 TextColumn::make('#')
                     ->label('#')
                     ->rowIndex(),
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->searchable()
-                    ->toggleable(),
                 TextColumn::make('feedingType.name')
                     ->label('Feeding Type')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(FontWeight::Bold),
                 TextColumn::make('farm.name')
                     ->label('Farm')
                     ->searchable()
-                    ->sortable()
-                    ->toggleable(),
+                    ->sortable(),
                 TextColumn::make('livestock.identificationNumber')
-                    ->label('Livestock Tag')
+                    ->label('Livestock')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('eventDate')
                     ->label('Event Date')
                     ->dateTime()
-                    ->sortable()
-                    ->formatStateUsing(fn ($record, $state) => $state ?? $record->created_at),
-                TextColumn::make('nextFeedingTime')
-                    ->label('Next Feeding Time')
-                    ->dateTime()
                     ->sortable(),
-                TextColumn::make('amount')
-                    ->label('Amount')
-                    ->numeric()
-                    ->toggleable(),
+                TextColumn::make('feedGiven')
+                    ->label('Feed Given')
+                    ->searchable()
+                    ->limit(30),
+                TextColumn::make('quantity')
+                    ->label('Quantity')
+                    ->numeric(decimalPlaces: 2)
+                    ->sortable(),
+                TextColumn::make('quantityUnit')
+                    ->label('Unit')
+                    ->badge(),
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
             ])
             ->filters([
-                //
+                SelectFilter::make('farmUuid')
+                    ->label('Farm')
+                    ->relationship('farm', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('livestockUuid')
+                    ->label('Livestock')
+                    ->relationship('livestock', 'identificationNumber')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('feedingTypeId')
+                    ->label('Feeding Type')
+                    ->relationship('feedingType', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 ActionGroup::make([
@@ -79,11 +91,6 @@ class FeedingsTable
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
-                                            TextEntry::make('uuid')
-                                                ->label('UUID')
-                                                ->weight(FontWeight::Bold)
-                                                ->copyable()
-                                                ->columnSpan(2),
                                             TextEntry::make('farm.name')
                                                 ->label('Farm')
                                                 ->weight(FontWeight::Bold)

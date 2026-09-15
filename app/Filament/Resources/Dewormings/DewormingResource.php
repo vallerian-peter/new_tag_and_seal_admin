@@ -33,7 +33,7 @@ class DewormingResource extends Resource
 
     protected static ?int $navigationSort = 4; // will adjust later maybe but set accordingly?
 
-    protected static ?string $recordTitleAttribute = 'uuid';
+    protected static ?string $recordTitleAttribute = 'dose';
 
     public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
     {

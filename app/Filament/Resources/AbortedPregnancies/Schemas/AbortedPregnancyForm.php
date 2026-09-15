@@ -7,6 +7,7 @@ use App\Models\Livestock;
 use App\Support\UuidHelper;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -23,24 +24,18 @@ class AbortedPregnancyForm
             ->components([
                 Section::make('Basic Information')
                     ->schema([
-                        TextInput::make('uuid')
-                            ->label('UUID')
+                        Hidden::make('uuid')
                             ->default(function () {
-                                // Format: timestamp-randomNumber-eventType
                                 $timestamp = now()->timestamp;
                                 $random = mt_rand(100000, 999999);
                                 return "{$timestamp}-{$random}-abort";
                             })
-                            ->readOnly()
-                            ->required()
-                            ->maxLength(255)
-                            ->columnSpanFull()
-                            ->helperText('Auto-generated: timestamp-random-eventType'),
+                            ->required(),
                         
                         Select::make('farmUuid')
                             ->label('Farm')
                             ->relationship('farm', 'name')
-                            ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?? $record->uuid) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
+                            ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?: ($record->referenceNo ?: 'Farm #' . $record->id)) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
                             ->searchable()
                             ->preload()
                             ->required()
@@ -64,7 +59,7 @@ class AbortedPregnancyForm
                                     ->get()
                                     ->mapWithKeys(function ($livestock) {
                                         $label = trim(
-                                            ($livestock->identificationNumber ?? $livestock->uuid) . 
+                                            ($livestock->identificationNumber ?: ($livestock->name ?: 'Livestock #' . $livestock->id)) . 
                                             ($livestock->name ? " - {$livestock->name}" : '') .
                                             ($livestock->species ? " ({$livestock->species->name})" : '')
                                         );

@@ -62,10 +62,10 @@ class VaccinationsTable
                     ])
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
             ])
             ->filters([])
             ->recordActions([
@@ -82,11 +82,6 @@ class VaccinationsTable
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
-                                            TextEntry::make('uuid')
-                                                ->label('UUID')
-                                                ->weight(FontWeight::Bold)
-                                                ->copyable()
-                                                ->columnSpan(2),
                                             TextEntry::make('vaccinationNo')
                                                 ->label('Vaccination No.')
                                                 ->weight(FontWeight::Bold)

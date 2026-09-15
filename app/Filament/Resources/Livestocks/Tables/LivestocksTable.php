@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Livestocks\Tables;
 
+use App\Filament\Resources\Livestocks\Pages\ViewLivestock;
 use App\Models\AbortedPregnancy;
 use App\Models\BirthEvent;
 use App\Models\Calving;
@@ -98,14 +99,14 @@ class LivestocksTable
                     ->toggleable(),
                 TextColumn::make('primaryColor')
                     ->label('Primary Color')
-                    ->badge()
-                    ->color('info')
+                    ->html()
+                    ->formatStateUsing(fn (?string $state) => ViewLivestock::renderColorBadge($state))
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('secondaryColor')
                     ->label('Secondary Color')
-                    ->badge()
-                    ->color('warning')
+                    ->html()
+                    ->formatStateUsing(fn (?string $state) => ViewLivestock::renderColorBadge($state))
                     ->sortable()
                     ->toggleable(),
                 TextColumn::make('status')
@@ -119,7 +120,7 @@ class LivestocksTable
                     ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
                 TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime()

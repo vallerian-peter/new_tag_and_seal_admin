@@ -21,8 +21,9 @@ class IncomeExpenditureReportPdfController
         $toDate = $this->normalizeDate($request->query('to'));
         $farmUuid = $request->filled('farmUuid') ? (string) $request->query('farmUuid') : null;
         $farmerId = $request->filled('farmerId') ? (string) $request->query('farmerId') : null;
+        $search = $request->filled('search') ? (string) $request->query('search') : null;
 
-        $payload = IncomeExpenditureReportData::build($fromDate, $toDate, $farmUuid, $farmerId);
+        $payload = IncomeExpenditureReportData::build($fromDate, $toDate, $farmUuid, $farmerId, $search);
 
         $brandName = Filament::getCurrentPanel()?->getBrandName() ?? config('app.name', 'Report');
 
@@ -32,6 +33,7 @@ class IncomeExpenditureReportPdfController
             'toDate' => $toDate,
             'farmUuid' => $farmUuid,
             'farmerId' => $farmerId,
+            'search' => $search,
             'brandName' => $brandName,
             ...$payload,
         ])->setPaper('a4', 'portrait');

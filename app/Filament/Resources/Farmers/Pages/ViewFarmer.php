@@ -75,19 +75,18 @@ class ViewFarmer extends ViewRecord
                 Section::make('Identity & Education')
                     ->description('ID card and school level details')
                     ->schema([
-                        TextEntry::make('identityCardTypeId')
+                        TextEntry::make('identityCardType.name')
                             ->label('ID Card Type')
                             ->placeholder('N/A'),
                         TextEntry::make('identityNumber')
                             ->label('ID Number')
                             ->copyable()
                             ->placeholder('N/A'),
-                        TextEntry::make('schoolLevelId')
+                        TextEntry::make('schoolLevel.name')
                             ->label('Education Level')
                             ->placeholder('N/A'),
                     ])
-                    ->columns(3)
-                    ->collapsible(),
+                    ->columns(3),
 
                 Section::make('Farmer Details')
                     ->description('Type and organization membership')
@@ -100,30 +99,36 @@ class ViewFarmer extends ViewRecord
                             ->placeholder('None')
                             ->columnSpanFull(),
                     ])
-                    ->columns(2)
-                    ->collapsible(),
+                    ->columns(2),
 
                 Section::make('Location Details')
                     ->description('Geographical location hierarchy')
                     ->schema([
-                        TextEntry::make('countryId')
-                            ->label('Country ID'),
-                        TextEntry::make('regionId')
-                            ->label('Region ID'),
-                        TextEntry::make('districtId')
-                            ->label('District ID'),
-                        TextEntry::make('wardId')
-                            ->label('Ward ID'),
-                        TextEntry::make('villageId')
-                            ->label('Village ID')
-                            ->placeholder('N/A'),
-                        TextEntry::make('streetId')
-                            ->label('Street ID')
+                        TextEntry::make('country.name')
+                            ->label('Country')
+                            ->placeholder('N/A')
+                            ->icon('heroicon-o-globe-alt'),
+                        TextEntry::make('region.name')
+                            ->label('Region')
+                            ->placeholder('N/A')
+                            ->icon('heroicon-o-map'),
+                        TextEntry::make('district.name')
+                            ->label('District')
+                            ->placeholder('N/A')
+                            ->icon('heroicon-o-map-pin'),
+                        TextEntry::make('ward.name')
+                            ->label('Ward')
+                            ->placeholder('N/A')
+                            ->icon('heroicon-o-map-pin'),
+                        TextEntry::make('village.name')
+                            ->label('Village')
+                            ->placeholder('N/A')
+                            ->icon('heroicon-o-home'),
+                        TextEntry::make('street.name')
+                            ->label('Street')
                             ->placeholder('N/A'),
                     ])
-                    ->columns(3)
-                    ->collapsible()
-                    ->collapsed(),
+                    ->columns(3),
 
                 Section::make('System Information')
                     ->description('Status and audit trail')
@@ -136,8 +141,9 @@ class ViewFarmer extends ViewRecord
                                 'inactive' => 'danger',
                                 default => 'gray',
                             }),
-                        TextEntry::make('createdBy')
-                            ->label('Created By User ID')
+                        TextEntry::make('creator.username')
+                            ->label('Created By')
+                            ->formatStateUsing(fn ($record) => $record->creator?->getFilamentName() ?? $record->creator?->username ?? 'System')
                             ->placeholder('System'),
                         TextEntry::make('created_at')
                             ->label('Created At')
@@ -148,9 +154,7 @@ class ViewFarmer extends ViewRecord
                             ->dateTime('M d, Y h:i A')
                             ->icon('heroicon-o-arrow-path'),
                     ])
-                    ->columns(4)
-                    ->collapsible()
-                    ->collapsed(),
+                    ->columns(4),
             ]);
     }
 }

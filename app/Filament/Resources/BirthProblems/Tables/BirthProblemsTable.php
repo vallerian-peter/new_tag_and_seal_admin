@@ -31,10 +31,10 @@ class BirthProblemsTable
                     ->badge()
                     ->color(fn ($state) => $state === 'Generic (All Types)' ? 'gray' : 'info'),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
                 TextColumn::make('updated_at')
                     ->label('Updated')
                     ->dateTime()

@@ -52,10 +52,10 @@ class DryoffsTable
                     ->label('Reason')
                     ->toggleable(),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
             ])
             ->filters([])
             ->recordActions([
@@ -72,11 +72,6 @@ class DryoffsTable
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
-                                            TextEntry::make('uuid')
-                                                ->label('UUID')
-                                                ->weight(FontWeight::Bold)
-                                                ->copyable()
-                                                ->columnSpan(2),
                                             TextEntry::make('farm.name')
                                                 ->label('Farm')
                                                 ->weight(FontWeight::Bold)

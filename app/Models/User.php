@@ -199,10 +199,12 @@ class User extends Authenticatable implements FilamentUser, HasName
         switch ($this->role) {
             case UserRole::FARMER:
                 return $this->belongsTo(Farmer::class, 'roleId');
-            case UserRole::SYSTEM_USER:
             case UserRole::EXTENSION_OFFICER:
-            case UserRole::VET:
+                return $this->belongsTo(ExtensionOfficer::class, 'roleId');
             case UserRole::FARM_INVITED_USER:
+                return $this->belongsTo(FarmUser::class, 'roleId');
+            case UserRole::SYSTEM_USER:
+            case UserRole::VET:
                 return $this->belongsTo(SystemUser::class, 'roleId');
             default:
                 return null;
@@ -248,21 +250,37 @@ class User extends Authenticatable implements FilamentUser, HasName
             return $this->username ?? $this->email ?? 'User';
         }
 
-        // Try to get name from the profile based on role
-        $profile = $profileRelation->first();
+        try {
+            // Try to get name from the profile based on role
+            $profile = $profileRelation->first();
 
-        if ($profile) {
-            // If it's a Farmer profile
-            if ($this->role === UserRole::FARMER) {
-                $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->surname);
-                return $name ?: ($this->username ?? $this->email ?? 'User');
-            }
+            if ($profile) {
+                // If it's a Farmer profile
+                if ($this->role === UserRole::FARMER) {
+                    $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->surname);
+                    return $name ?: ($this->username ?? $this->email ?? 'User');
+                }
 
-            // If it's a SystemUser profile (systemUser, extensionOfficer, vet, farmInvitedUser)
-            if (in_array($this->role, [UserRole::SYSTEM_USER, UserRole::EXTENSION_OFFICER, UserRole::VET, UserRole::FARM_INVITED_USER])) {
-                $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->lastName);
-                return $name ?: ($this->username ?? $this->email ?? 'User');
+                // If it's a SystemUser or Vet profile
+                if (in_array($this->role, [UserRole::SYSTEM_USER, UserRole::VET])) {
+                    $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->lastName);
+                    return $name ?: ($this->username ?? $this->email ?? 'User');
+                }
+
+                // If it's an Extension Officer profile
+                if ($this->role === UserRole::EXTENSION_OFFICER) {
+                    $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->lastName);
+                    return $name ?: ($this->username ?? $this->email ?? 'User');
+                }
+
+                // If it's a Farm User profile
+                if ($this->role === UserRole::FARM_INVITED_USER) {
+                    $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->lastName);
+                    return $name ?: ($this->username ?? $this->email ?? 'User');
+                }
             }
+        } catch (\Throwable $e) {
+            // Fallback gracefully
         }
 
         // Fallback to username or email if profile not loaded

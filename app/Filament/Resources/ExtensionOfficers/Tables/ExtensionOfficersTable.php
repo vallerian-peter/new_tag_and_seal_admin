@@ -122,7 +122,7 @@ class ExtensionOfficersTable
                     ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(isToggledHiddenByDefault: true),
+                    ,
                 TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime()

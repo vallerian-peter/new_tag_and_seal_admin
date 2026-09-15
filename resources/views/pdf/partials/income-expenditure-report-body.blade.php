@@ -18,6 +18,12 @@
             <td><strong>Farmer</strong></td>
             <td>{{ $filterLabels['farmer'] ?? '—' }}</td>
         </tr>
+        @if (!empty($search))
+        <tr>
+            <td><strong>Search Filter</strong></td>
+            <td>{{ $search }}</td>
+        </tr>
+        @endif
         <tr>
             <td><strong>Generated</strong></td>
             <td>{{ $generatedAt->timezone(config('app.timezone'))->format('Y-m-d H:i') }}</td>

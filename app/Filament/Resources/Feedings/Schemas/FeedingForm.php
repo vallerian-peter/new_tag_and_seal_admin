@@ -7,6 +7,7 @@ use App\Models\Livestock;
 use App\Support\UuidHelper;
 use Carbon\Carbon;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -19,17 +20,13 @@ class FeedingForm
     {
         return $schema
             ->components([
-                TextInput::make('uuid')
-                    ->label('UUID')
+                Hidden::make('uuid')
                     ->default(function () {
                         $timestamp = now()->timestamp;
                         $uuid = UuidHelper::generate();
                         return "{$timestamp}-{$uuid}-feeding";
                     })
-                    ->readOnly()
-                    ->required()
-                    ->maxLength(255)
-                    ->helperText('Auto-generated: timestamp-uuid-eventType'),
+                    ->required(),
                 Select::make('feedingTypeId')
                     ->label('Feeding Type')
                     ->relationship('feedingType', 'name')
@@ -39,7 +36,7 @@ class FeedingForm
                 Select::make('farmUuid')
                     ->label('Farm')
                     ->relationship('farm', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?? $record->uuid) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?: ($record->referenceNo ?: 'Farm #' . $record->id)) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
                     ->searchable()
                     ->preload()
                     ->required()
@@ -58,7 +55,7 @@ class FeedingForm
                             ->get()
                             ->mapWithKeys(function ($livestock) {
                                 $label = trim(
-                                    ($livestock->identificationNumber ?? $livestock->uuid) . 
+                                    ($livestock->identificationNumber ?: ($livestock->name ?: 'Livestock #' . $livestock->id)) . 
                                     ($livestock->name ? " - {$livestock->name}" : '') .
                                     ($livestock->species ? " ({$livestock->species->name})" : '')
                                 );
@@ -70,10 +67,8 @@ class FeedingForm
                     ->required()
                     ->disabled(fn (Get $get) => !$get('farmUuid'))
                     ->helperText(fn (Get $get) => !$get('farmUuid') ? 'Please select a farm first' : null)
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->identificationNumber ?? $record->uuid) . ' ' . ($record->name ? "- {$record->name}" : '')))
-                    ->searchable()
-                    ->preload()
-                    ->required(),
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->identificationNumber ?: ($record->name ?: 'Livestock #' . $record->id)) . ' ' . ($record->name ? "- {$record->name}" : '')))
+                    ->preload(),
                 EventLogFormHelpers::eventDateField(),
                 DateTimePicker::make('nextFeedingTime')
                     ->label('Next Feeding Time')

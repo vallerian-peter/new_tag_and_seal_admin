@@ -23,10 +23,10 @@ final class IncomeExpenditureReportData
      *     filterLabels: array{farm: string, farmer: string}
      * }
      */
-    public static function build(?string $fromDate, ?string $toDate, ?string $farmUuid, ?string $farmerId): array
+    public static function build(?string $fromDate, ?string $toDate, ?string $farmUuid, ?string $farmerId, ?string $search = null): array
     {
         $financeIncomes = FinanceIncome::query()
-            ->with(['farm.farmer'])
+            ->with(['farm.farmer', 'farmer'])
             ->when($farmUuid, fn ($q) => $q->where('farmUuid', $farmUuid))
             ->when($farmerId, fn ($q) => $q->where('farmerId', (int) $farmerId))
             ->when($fromDate || $toDate, fn ($q) => self::applyFinanceIncomeDateRange($q, $fromDate, $toDate))
@@ -62,7 +62,7 @@ final class IncomeExpenditureReportData
             ->get();
 
         $expenses = FinanceExpense::query()
-            ->with(['farm.farmer'])
+            ->with(['farm.farmer', 'farmer'])
             ->when($farmUuid, fn ($q) => $q->where('farmUuid', $farmUuid))
             ->when($farmerId, fn ($q) => $q->where('farmerId', (int) $farmerId))
             ->when($fromDate || $toDate, fn ($q) => self::applyFinanceExpenseDateRange($q, $fromDate, $toDate))
@@ -70,7 +70,7 @@ final class IncomeExpenditureReportData
             ->get();
 
         $bills = Bill::query()
-            ->with(['farm.farmer'])
+            ->with(['farm.farmer', 'farmer'])
             ->when($farmUuid, fn ($q) => $q->where('farmUuid', $farmUuid))
             ->when($farmerId, fn ($q) => $q->where('farmerId', (int) $farmerId))
             ->when($fromDate, fn ($q) => $q->whereDate('created_at', '>=', $fromDate))
@@ -160,6 +160,13 @@ final class IncomeExpenditureReportData
 
         usort($incomeRows, fn (array $a, array $b) => strcmp((string) ($b['date'] ?? ''), (string) ($a['date'] ?? '')));
 
+        foreach ($incomeRows as &$iRow) {
+            if (empty($iRow['farmer'])) {
+                $iRow['farmer'] = '—';
+            }
+        }
+        unset($iRow);
+
         $rowsFromFinance = $expenses->map(function (FinanceExpense $row): array {
             $sourceType = (string) ($row->sourceType ?? 'expense');
             $displayType = match ($sourceType) {
@@ -168,13 +175,15 @@ final class IncomeExpenditureReportData
                 default => 'Expense',
             };
 
+            $farmerName = trim(($row->farmer?->firstName ?? $row->farm?->farmer?->firstName ?? '').' '.($row->farmer?->surname ?? $row->farm?->farmer?->surname ?? ''));
+
             return [
                 'type' => $displayType,
                 'reference' => $displayType.' record',
                 'referenceCode' => $row->billNo ?: $row->subjectType ?: $row->sourceUuid,
                 'date' => optional($row->expenseDate)->toDateString() ?: optional($row->created_at)->toDateString(),
                 'farm' => $row->farm?->name ?? '-',
-                'farmer' => trim(($row->farmer?->firstName ?? '').' '.($row->farmer?->surname ?? '')),
+                'farmer' => $farmerName !== '' ? $farmerName : '—',
                 'amount' => (float) ($row->totalCost ?? 0),
                 'status' => $row->status ?? 'pending',
                 'subject' => $row->subjectType ?? '-',
@@ -183,13 +192,15 @@ final class IncomeExpenditureReportData
         });
 
         $rowsFromOrphanBills = $orphanBills->map(function (Bill $row): array {
+            $farmerName = trim(($row->farmer?->firstName ?? $row->farm?->farmer?->firstName ?? '').' '.($row->farmer?->surname ?? $row->farm?->farmer?->surname ?? ''));
+
             return [
                 'type' => 'Bill preview',
                 'reference' => 'Bill record',
                 'referenceCode' => $row->billNo ?: $row->uuid,
                 'date' => optional($row->created_at)->toDateString() ?? '',
                 'farm' => $row->farm?->name ?? '-',
-                'farmer' => trim(($row->farmer?->firstName ?? '').' '.($row->farmer?->surname ?? '')),
+                'farmer' => $farmerName !== '' ? $farmerName : '—',
                 'amount' => (float) ($row->amount ?? 0),
                 'status' => $row->status ?? 'pending',
                 'subject' => $row->subjectType ?? '-',
@@ -204,11 +215,13 @@ final class IncomeExpenditureReportData
             ->all();
 
         $billRows = $bills->map(function (Bill $row): array {
+            $farmerName = trim(($row->farmer?->firstName ?? $row->farm?->farmer?->firstName ?? '').' '.($row->farmer?->surname ?? $row->farm?->farmer?->surname ?? ''));
+
             return [
                 'billNo' => $row->billNo,
                 'createdAt' => optional($row->created_at)->toDateString(),
                 'farm' => $row->farm?->name ?? '-',
-                'farmer' => trim(($row->farmer?->firstName ?? '').' '.($row->farmer?->surname ?? '')),
+                'farmer' => $farmerName !== '' ? $farmerName : '—',
                 'subjectType' => $row->subjectType ?? '-',
                 'quantity' => (int) ($row->quantity ?? 1),
                 'amount' => (float) ($row->amount ?? 0),
@@ -217,6 +230,28 @@ final class IncomeExpenditureReportData
                 'referenceCode' => $row->billNo ?: $row->uuid,
             ];
         })->values()->all();
+
+        if (filled($search)) {
+            $term = mb_strtolower(trim($search));
+            $matches = function (array $row) use ($term): bool {
+                foreach (['billNo', 'type', 'reference', 'referenceCode', 'farm', 'farmer', 'subject', 'status'] as $key) {
+                    if (!empty($row[$key]) && str_contains(mb_strtolower((string) $row[$key]), $term)) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            $incomeRows = array_values(array_filter($incomeRows, $matches));
+            $expenseRows = array_values(array_filter($expenseRows, $matches));
+            $billRows = array_values(array_filter($billRows, $matches));
+
+            $summary['totalIncome'] = array_sum(array_column($incomeRows, 'amount'));
+            $summary['totalExpenditure'] = array_sum(array_column($expenseRows, 'amount'));
+            $summary['net'] = $summary['totalIncome'] - $summary['totalExpenditure'];
+            $summary['totalIncomeRows'] = count($incomeRows);
+            $summary['totalExpenseRows'] = count($expenseRows);
+        }
 
         $farmer = $farmerId ? Farmer::query()->find((int) $farmerId) : null;
         $farmerLabel = $farmer
@@ -297,7 +332,7 @@ final class IncomeExpenditureReportData
     protected static function orphanBillsForExpenditureQuery(array $billUuidsWithExpenseInRange, ?string $fromDate, ?string $toDate, ?string $farmUuid, ?string $farmerId): Builder
     {
         $q = Bill::query()
-            ->with(['farm.farmer'])
+            ->with(['farm.farmer', 'farmer'])
             ->when($farmUuid, fn ($query) => $query->where('farmUuid', $farmUuid))
             ->when($farmerId, fn ($query) => $query->where('farmerId', (int) $farmerId))
             ->when($fromDate, fn ($query) => $query->whereDate('created_at', '>=', $fromDate))

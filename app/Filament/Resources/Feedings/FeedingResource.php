@@ -33,7 +33,7 @@ class FeedingResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    protected static ?string $recordTitleAttribute = 'uuid';
+    protected static ?string $recordTitleAttribute = 'id';
 
     public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
     {

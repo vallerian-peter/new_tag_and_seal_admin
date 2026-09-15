@@ -25,12 +25,11 @@ class IdentificationEventsTable
             ->defaultSort('eventDate', 'desc')
             ->columns([
                 TextColumn::make('#')->label('#')->rowIndex(),
-                TextColumn::make('uuid')->label('UUID')->searchable()->toggleable(),
                 TextColumn::make('farm.name')->label('Farm')->searchable()->sortable(),
                 TextColumn::make('livestock.identificationNumber')->label('Livestock Tag')->searchable()->sortable(),
                 TextColumn::make('eventDate')->label('Event Date')->dateTime()->sortable()->formatStateUsing(fn ($record, $state) => $state ?? $record->created_at),
                 TextColumn::make('identificationNumber')->label('Identification Number')->searchable()->badge()->toggleable(),
-                TextColumn::make('created_at')->label('Created At')->dateTime()->sortable()->toggleable(),
+                TextColumn::make('created_at')->label('Created At')->dateTime()->sortable(),
             ])
             ->filters([
                 SelectFilter::make('farmUuid')
@@ -57,7 +56,6 @@ class IdentificationEventsTable
                             Section::make('Basic Information')
                                 ->schema([
                                     Grid::make(2)->schema([
-                                        TextEntry::make('uuid')->label('UUID')->weight(FontWeight::Bold)->copyable()->columnSpan(2),
                                         TextEntry::make('farm.name')->label('Farm')->weight(FontWeight::Bold)->icon('heroicon-o-home'),
                                         TextEntry::make('livestock.identificationNumber')->label('Livestock Tag')->weight(FontWeight::Bold)->icon('heroicon-o-tag'),
                                     ]),

@@ -4,10 +4,12 @@ namespace App\Filament\Resources\FarmUsers\Tables;
 
 use App\Enums\UserRole;
 use App\Models\User;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -74,7 +76,7 @@ class FarmUsersTable
                     ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
                 TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime()
@@ -85,25 +87,28 @@ class FarmUsersTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
-                DeleteAction::make()
-                    ->before(function ($record) {
-                        // Delete linked User account before deleting FarmUser
-                        $linkedUser = User::where('role', UserRole::FARM_INVITED_USER)
-                            ->where('roleId', $record->id)
-                            ->first();
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make()
+                        ->before(function ($record) {
+                            // Delete linked User account before deleting FarmUser
+                            $linkedUser = User::where('role', UserRole::FARM_INVITED_USER)
+                                ->where('roleId', $record->id)
+                                ->first();
 
-                        if ($linkedUser) {
-                            $userEmail = $linkedUser->email;
-                            $linkedUser->delete();
+                            if ($linkedUser) {
+                                $userEmail = $linkedUser->email;
+                                $linkedUser->delete();
 
-                            Notification::make()
-                                ->title('User account deleted')
-                                ->body("Linked login account ({$userEmail}) has been deleted.")
-                                ->success()
-                                ->send();
-                        }
-                    }),
+                                Notification::make()
+                                    ->title('User account deleted')
+                                    ->body("Linked login account ({$userEmail}) has been deleted.")
+                                    ->success()
+                                    ->send();
+                            }
+                        }),
+                ]),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\SystemUsers;
 use App\Filament\Resources\SystemUsers\Pages\CreateSystemUser;
 use App\Filament\Resources\SystemUsers\Pages\EditSystemUser;
 use App\Filament\Resources\SystemUsers\Pages\ListSystemUsers;
+use App\Filament\Resources\SystemUsers\Pages\ViewSystemUser;
 use App\Filament\Resources\SystemUsers\Schemas\SystemUserForm;
 use App\Filament\Resources\SystemUsers\Tables\SystemUsersTable;
 use App\Models\SystemUser;
@@ -53,6 +54,7 @@ class SystemUserResource extends Resource
         return [
             'index' => ListSystemUsers::route('/'),
             'create' => CreateSystemUser::route('/create'),
+            'view' => ViewSystemUser::route('/{record}'),
             'edit' => EditSystemUser::route('/{record}/edit'),
         ];
     }

@@ -7,7 +7,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
-use Filament\Actions\Action;
+use Filament\Actions\ViewAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Infolists\Components\TextEntry;
@@ -23,63 +23,96 @@ class VaccinesTable
                 TextColumn::make('#')
                     ->label('#')
                     ->rowIndex(),
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->toggleable()
-                    ->searchable(),
                 TextColumn::make('name')
                     ->label('Vaccine Name')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('farm.name')
+                    ->label('Farm')
+                    ->searchable()
+                    ->sortable()
+                    ->default('—'),
                 TextColumn::make('lot')
                     ->label('Lot')
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->default('—'),
                 TextColumn::make('formulationType')
-                    ->label('Formulation Type')
+                    ->label('Formulation')
                     ->badge()
-                    ->sortable(),
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'live-attenuated' => 'Live Attenuated',
+                        'inactivated' => 'Inactivated',
+                        default => $state ?? '—',
+                    }),
+                TextColumn::make('dose')
+                    ->label('Dose')
+                    ->sortable()
+                    ->default('—'),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
-                    ->sortable(),
+                    ->color(fn (string $state): string => match ($state) {
+                        'active' => 'success',
+                        'expired' => 'danger',
+                        'inactive', 'recalled' => 'warning',
+                        default => 'gray',
+                    }),
                 TextColumn::make('vaccineType.name')
-                    ->label('Vaccine Type')
-                    ->searchable()
-                    ->sortable(),
-                TextColumn::make('created_at')
-                    ->label('Created')
-                    ->dateTime()
+                    ->label('Type')
                     ->sortable()
-                    ->toggleable(),
+                    ->default('—'),
+                TextColumn::make('vaccineSchedule')
+                    ->label('Schedule')
+                    ->formatStateUsing(fn (?string $state): string => match ($state) {
+                        'regular' => 'Regular Schedule',
+                        'booster' => 'Booster',
+                        'seasonal' => 'Seasonal',
+                        'emergency' => 'Emergency',
+                        default => $state ?? '—',
+                    })
+                    ->sortable()
+                    ->default('—'),
+                TextColumn::make('created_at')
+                    ->label('Created At')
+                    ->dateTime()
+                    ->sortable(),
                 TextColumn::make('updated_at')
                     ->label('Updated')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([])
+            ->filters([
+                //
+            ])
             ->recordActions([
                 ActionGroup::make([
-                    Action::make('view')
-                        ->label('View')
-                        ->icon('heroicon-o-eye')
+                    ViewAction::make()
                         ->modalHeading('Vaccine Details')
                         ->modalSubmitAction(false)
                         ->modalCancelActionLabel('Close')
                         ->modalWidth('lg')
                         ->infolist([
-                            TextEntry::make('uuid')
-                                ->label('UUID')
-                                ->weight(FontWeight::Bold),
                             TextEntry::make('name')
                                 ->label('Vaccine Name')
                                 ->weight(FontWeight::Bold),
+                            TextEntry::make('farm.name')
+                                ->label('Farm')
+                                ->weight(FontWeight::Bold)
+                                ->default('—'),
                             TextEntry::make('lot')
                                 ->label('Lot')
-                                ->weight(FontWeight::Bold),
+                                ->weight(FontWeight::Bold)
+                                ->default('—'),
                             TextEntry::make('formulationType')
                                 ->label('Formulation Type')
+                                ->badge()
+                                ->formatStateUsing(fn (?string $state): string => match ($state) {
+                                    'live-attenuated' => 'Live Attenuated',
+                                    'inactivated' => 'Inactivated',
+                                    default => $state ?? '—',
+                                })
                                 ->weight(FontWeight::Bold),
                             TextEntry::make('dose')
                                 ->label('Dose')
@@ -87,6 +120,13 @@ class VaccinesTable
                                 ->default('—'),
                             TextEntry::make('status')
                                 ->label('Status')
+                                ->badge()
+                                ->color(fn (string $state): string => match ($state) {
+                                    'active' => 'success',
+                                    'expired' => 'danger',
+                                    'inactive', 'recalled' => 'warning',
+                                    default => 'gray',
+                                })
                                 ->weight(FontWeight::Bold),
                             TextEntry::make('vaccineType.name')
                                 ->label('Vaccine Type')
@@ -94,6 +134,13 @@ class VaccinesTable
                                 ->default('—'),
                             TextEntry::make('vaccineSchedule')
                                 ->label('Vaccine Schedule')
+                                ->formatStateUsing(fn (?string $state): string => match ($state) {
+                                    'regular' => 'Regular Schedule',
+                                    'booster' => 'Booster',
+                                    'seasonal' => 'Seasonal',
+                                    'emergency' => 'Emergency',
+                                    default => $state ?? '—',
+                                })
                                 ->weight(FontWeight::Bold)
                                 ->default('—'),
                             TextEntry::make('created_at')

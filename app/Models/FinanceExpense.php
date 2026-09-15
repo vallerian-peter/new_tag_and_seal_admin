@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Support\UuidHelper;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -29,6 +30,15 @@ class FinanceExpense extends Model
         'totalCost' => 'decimal:2',
         'expenseDate' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $expense): void {
+            if (empty($expense->uuid)) {
+                $expense->uuid = UuidHelper::generate();
+            }
+        });
+    }
 
     public function farmer(): BelongsTo
     {

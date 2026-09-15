@@ -6,6 +6,7 @@ use App\Filament\Resources\Helpers\EventLogFormHelpers;
 use App\Support\UuidHelper;
 use Carbon\Carbon;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -17,30 +18,27 @@ class TransferForm
     {
         return $schema
             ->components([
-                TextInput::make('uuid')
-                    ->label('UUID')
+                Hidden::make('uuid')
                     ->default(fn () => UuidHelper::generate())
-                    ->readOnly()
-                    ->required()
-                    ->maxLength(255),
+                    ->required(),
                 Select::make('farmUuid')
                     ->label('From Farm')
                     ->relationship('fromFarm', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?? $record->uuid) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?: ($record->referenceNo ?: 'Farm #' . $record->id)) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
                     ->searchable()
                     ->preload()
                     ->required(),
                 Select::make('toFarmUuid')
                     ->label('To Farm')
                     ->relationship('toFarm', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?? $record->uuid) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?: ($record->referenceNo ?: 'Farm #' . $record->id)) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
                     ->searchable()
                     ->preload()
                     ->required(),
                 Select::make('livestockUuid')
                     ->label('Livestock')
                     ->relationship('livestock', 'identificationNumber')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->identificationNumber ?? $record->uuid) . ' ' . ($record->name ? "- {$record->name}" : '')))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->identificationNumber ?: ($record->name ?: 'Livestock #' . $record->id)) . ' ' . ($record->name ? "- {$record->name}" : '')))
                     ->searchable()
                     ->preload()
                     ->required(),

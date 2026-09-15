@@ -32,7 +32,7 @@ class MedicationResource extends Resource
 
     protected static ?int $navigationSort = 10;
 
-    protected static ?string $recordTitleAttribute = 'uuid';
+    protected static ?string $recordTitleAttribute = 'id';
 
     public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
     {

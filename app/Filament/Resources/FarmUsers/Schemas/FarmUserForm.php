@@ -21,7 +21,7 @@ class FarmUserForm
                             ->relationship('farm', 'name')
                             ->getOptionLabelFromRecordUsing(
                                 fn ($record) => trim(
-                                    ($record->name ?? $record->uuid) .
+                                    ($record->name ?: ($record->referenceNo ?: 'Farm #' . $record->id)) .
                                     ' (' . ($record->referenceNo ?? 'N/A') . ')'
                                 )
                             )
@@ -87,6 +87,20 @@ class FarmUserForm
                             ->columnSpan(1),
                     ])
                     ->columns(3),
+
+                Section::make('Security & Login Password')
+                    ->description('Set or update login credentials for this farm user')
+                    ->schema([
+                        TextInput::make('password')
+                            ->label('Update Password')
+                            ->password()
+                            ->revealable()
+                            ->nullable()
+                            ->minLength(6)
+                            ->maxLength(255)
+                            ->dehydrated(false)
+                            ->helperText('Leave blank to keep the current password. Enter a new password to update login credentials.'),
+                    ]),
             ]);
     }
 }

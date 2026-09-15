@@ -74,8 +74,13 @@ class EditFarmUser extends EditRecord
             $linkedUser->updatedBy = Auth::id();
             $linkedUser->save();
 
-            // If email changed, update password hash and resend invitation email
-            if ($newEmail !== $oldEmail) {
+            // Check if password was explicitly provided
+            $newPassword = $this->data['password'] ?? null;
+            if (filled($newPassword)) {
+                $linkedUser->password = Hash::make($newPassword);
+                $linkedUser->save();
+            } elseif ($newEmail !== $oldEmail) {
+                // If email changed and no specific password was provided, sync default password to new email
                 $linkedUser->password = Hash::make($newEmail);
                 $linkedUser->save();
 
@@ -91,7 +96,7 @@ class EditFarmUser extends EditRecord
 
             Notification::make()
                 ->title('Farm User updated')
-                ->body("Linked User account has been updated for {$farmUser->firstName}.")
+                ->body("Linked User account has been updated for {$farmUser->firstName}." . (filled($newPassword) ? ' Password was updated successfully.' : ''))
                 ->success()
                 ->send();
         }

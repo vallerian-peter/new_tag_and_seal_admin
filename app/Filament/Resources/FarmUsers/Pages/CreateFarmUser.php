@@ -41,11 +41,13 @@ class CreateFarmUser extends CreateRecord
         $currentAdmin = Auth::user();
         $creatorId = $currentAdmin?->id;
 
+        $customPassword = $this->data['password'] ?? null;
+        $plainPassword = filled($customPassword) ? $customPassword : $email;
+
         $user = User::create([
             'username'  => $username,
             'email'     => $email,
-            // Default password = email (same behavior as AuthController fallback)
-            'password'  => Hash::make($email),
+            'password'  => Hash::make($plainPassword),
             'role'      => UserRole::FARM_INVITED_USER,
             'roleId'    => $farmUser->id,
             'status'    => UserStatus::ACTIVE,
@@ -53,10 +55,10 @@ class CreateFarmUser extends CreateRecord
             'updatedBy' => $creatorId,
         ]);
 
-        // Send invitation email with credentials (email + password = email)
+        // Send invitation email with credentials
         try {
             Mail::to($email)->send(
-                new FarmUserInvitationMail($farmUser, $email, $email)
+                new FarmUserInvitationMail($farmUser, $email, $plainPassword)
             );
         } catch (\Throwable $mailException) {
             // Do not break UI flow if email fails; optionally could log

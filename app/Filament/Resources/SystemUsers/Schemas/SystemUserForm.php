@@ -30,6 +30,15 @@ class SystemUserForm
                     ->searchable()
                     ->preload()
                     ->default(null),
+                TextInput::make('password')
+                    ->label('Update Login Password')
+                    ->password()
+                    ->revealable()
+                    ->nullable()
+                    ->minLength(6)
+                    ->maxLength(255)
+                    ->dehydrated(false)
+                    ->helperText('Leave blank to keep existing password. Enter a new password to update login credentials for this system user.'),
             ]);
     }
 }

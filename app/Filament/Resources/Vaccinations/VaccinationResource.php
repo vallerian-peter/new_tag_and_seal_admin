@@ -32,7 +32,7 @@ class VaccinationResource extends Resource
 
     protected static ?int $navigationSort = 8;
 
-    protected static ?string $recordTitleAttribute = 'uuid';
+    protected static ?string $recordTitleAttribute = 'vaccinationNo';
 
     public static function getGlobalSearchResultTitle(Model $record): string | Htmlable
     {

@@ -29,6 +29,31 @@ class EditFarmer extends EditRecord
     }
 
     /**
+     * After saving the farmer, update linked User login password if provided.
+     */
+    protected function afterSave(): void
+    {
+        $newPassword = $this->data['password'] ?? null;
+        if (filled($newPassword)) {
+            $farmer = $this->record;
+            $linkedUser = User::where('roleId', $farmer->id)
+                ->where('role', UserRole::FARMER)
+                ->first();
+
+            if ($linkedUser) {
+                $linkedUser->password = \Illuminate\Support\Facades\Hash::make($newPassword);
+                $linkedUser->save();
+
+                Notification::make()
+                    ->title('Password updated')
+                    ->body("Login password for farmer {$farmer->firstName} was updated successfully.")
+                    ->success()
+                    ->send();
+            }
+        }
+    }
+
+    /**
      * Delete all Farms associated with this farmer.
      * Farm deletion will cascade to Livestocks, Vaccines, and all Livestock logs.
      */

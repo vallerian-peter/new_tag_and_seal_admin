@@ -25,6 +25,36 @@ class EditSystemUser extends EditRecord
     }
 
     /**
+     * After saving the system user, update linked User login password if provided.
+     */
+    protected function afterSave(): void
+    {
+        $newPassword = $this->data['password'] ?? null;
+        if (filled($newPassword)) {
+            $systemUser = $this->record;
+            $linkedUsers = User::where('roleId', $systemUser->id)
+                ->whereIn('role', [
+                    UserRole::SYSTEM_USER,
+                    UserRole::VET,
+                ])
+                ->get();
+
+            foreach ($linkedUsers as $linkedUser) {
+                $linkedUser->password = \Illuminate\Support\Facades\Hash::make($newPassword);
+                $linkedUser->save();
+            }
+
+            if ($linkedUsers->isNotEmpty()) {
+                Notification::make()
+                    ->title('Password updated')
+                    ->body("Login password for system user {$systemUser->firstName} was updated successfully.")
+                    ->success()
+                    ->send();
+            }
+        }
+    }
+
+    /**
      * Delete linked User accounts before deleting SystemUser.
      */
     protected function deleteLinkedUserAccounts(): void

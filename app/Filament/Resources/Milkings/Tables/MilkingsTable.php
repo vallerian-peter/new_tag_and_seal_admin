@@ -52,10 +52,10 @@ class MilkingsTable
                     ->label('Status')
                     ->sortable(),
                 TextColumn::make('created_at')
-                    ->label('Recorded')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
             ])
             ->filters([])
             ->recordActions([
@@ -72,11 +72,6 @@ class MilkingsTable
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
-                                            TextEntry::make('uuid')
-                                                ->label('UUID')
-                                                ->weight(FontWeight::Bold)
-                                                ->copyable()
-                                                ->columnSpan(2),
                                             TextEntry::make('farm.name')
                                                 ->label('Farm')
                                                 ->weight(FontWeight::Bold)

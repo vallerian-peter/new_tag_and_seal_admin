@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Vaccines\Schemas;
 
-use App\Models\VaccineSchedule;
 use App\Support\UuidHelper;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
@@ -15,16 +15,13 @@ class VaccineForm
     {
         return $schema
             ->components([
-                TextInput::make('uuid')
-                    ->label('UUID')
+                Hidden::make('uuid')
                     ->default(fn () => UuidHelper::generate())
-                    ->readOnly()
-                    ->required()
-                    ->maxLength(255),
+                    ->required(),
                 Select::make('farmUuid')
                     ->label('Farm')
                     ->relationship('farm', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?? $record->uuid) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?: ($record->referenceNo ?: 'Farm #' . $record->id)) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
                     ->searchable()
                     ->preload()
                     ->required(),
@@ -63,9 +60,12 @@ class VaccineForm
                     ->required(),
                 Select::make('vaccineSchedule')
                     ->label('Vaccine Schedule')
-                    ->options(fn () => VaccineSchedule::query()
-                        ->orderBy('name')
-                        ->pluck('name', 'id'))
+                    ->options([
+                        'regular' => 'Regular Schedule',
+                        'booster' => 'Booster',
+                        'seasonal' => 'Seasonal',
+                        'emergency' => 'Emergency',
+                    ])
                     ->nullable()
                     ->searchable(),
             ]);

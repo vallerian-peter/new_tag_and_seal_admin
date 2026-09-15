@@ -4,8 +4,11 @@ namespace App\Filament\Resources\Livestocks\Schemas;
 
 use App\Support\UuidHelper;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 
 class LivestockForm
@@ -17,14 +20,12 @@ class LivestockForm
                 Select::make('farmUuid')
                     ->label('Farm')
                     ->relationship('farm', 'name')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?? $record->uuid) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->name ?: ($record->referenceNo ?: 'Farm #' . $record->id)) . ' (' . ($record->referenceNo ?? 'N/A') . ')'))
                     ->searchable()
                     ->preload()
                     ->required(),
-                TextInput::make('uuid')
-                    ->label('UUID')
+                Hidden::make('uuid')
                     ->default(fn () => UuidHelper::generate())
-                    ->readOnly()
                     ->required(),
                 TextInput::make('identificationNumber')
                     ->nullable(),
@@ -47,20 +48,21 @@ class LivestockForm
                 Select::make('motherUuid')
                     ->label('Mother')
                     ->relationship('mother', 'identificationNumber')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->identificationNumber ?? $record->uuid) . ' ' . ($record->name ? "- {$record->name}" : '')))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->identificationNumber ?: ($record->name ?: 'Livestock #' . $record->id)) . ' ' . ($record->name ? "- {$record->name}" : '')))
                     ->searchable()
                     ->preload()
                     ->nullable(),
                 Select::make('fatherUuid')
                     ->label('Father')
                     ->relationship('father', 'identificationNumber')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->identificationNumber ?? $record->uuid) . ' ' . ($record->name ? "- {$record->name}" : '')))
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->identificationNumber ?: ($record->name ?: 'Livestock #' . $record->id)) . ' ' . ($record->name ? "- {$record->name}" : '')))
                     ->searchable()
                     ->preload()
                     ->nullable(),
                 Select::make('birthEventUuid')
                     ->label('Birth Event')
-                    ->relationship('birthEventAsOffspring', 'uuid')
+                    ->relationship('birthEventAsOffspring', 'id')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => 'Birth Event: ' . ($record->eventDate ?? $record->created_at?->format('Y-m-d') ?? '#' . $record->id))
                     ->searchable()
                     ->preload()
                     ->nullable(),
@@ -108,28 +110,18 @@ class LivestockForm
                     ->default(null),
                 Select::make('primaryColor')
                     ->label('Primary Color')
-                    ->options(self::getColorOptions())
+                    ->options(fn (Get $get): array => self::getColorOptions(currentColor: $get('primaryColor')))
                     ->searchable()
                     ->nullable()
                     ->live()
-                    ->afterStateUpdated(function ($state, callable $set, callable $get) {
-                        // If primary color is selected and matches secondary color, clear secondary color
-                        $secondaryColor = $get('secondaryColor');
-                        if ($state === $secondaryColor) {
+                    ->afterStateUpdated(function (?string $state, Set $set, Get $get): void {
+                        if ($state && $state === $get('secondaryColor')) {
                             $set('secondaryColor', null);
                         }
                     }),
                 Select::make('secondaryColor')
                     ->label('Secondary Color')
-                    ->options(function (callable $get) {
-                        $primaryColor = $get('primaryColor');
-                        $options = self::getColorOptions();
-                        // Filter out primary color from secondary color options
-                        if ($primaryColor && isset($options[$primaryColor])) {
-                            unset($options[$primaryColor]);
-                        }
-                        return $options;
-                    })
+                    ->options(fn (Get $get): array => self::getColorOptions(exclude: $get('primaryColor'), currentColor: $get('secondaryColor')))
                     ->searchable()
                     ->nullable()
                     ->live(),
@@ -137,29 +129,28 @@ class LivestockForm
     }
 
     /**
-     * Get color options for dropdown
+     * Get color options for dropdown, aligned with the mobile app (ColorHelper)
      */
-    public static function getColorOptions(): array
+    public static function getColorOptions(?string $exclude = null, ?string $currentColor = null): array
     {
-        return [
-            'red' => 'Red',
-            'green' => 'Green',
-            'blue' => 'Blue',
+        $colors = [
             'black' => 'Black',
             'white' => 'White',
             'brown' => 'Brown',
-            'yellow' => 'Yellow',
-            'orange' => 'Orange',
-            'pink' => 'Pink',
+            'red' => 'Red',
             'gray' => 'Gray',
-            'grey' => 'Grey',
-            'purple' => 'Purple',
-            'tan' => 'Tan',
-            'beige' => 'Beige',
-            'cream' => 'Cream',
-            'gold' => 'Gold',
-            'silver' => 'Silver',
-            'mixed' => 'Mixed',
         ];
+
+        // Keep current color if an existing record has a custom/legacy value
+        if ($currentColor && !isset($colors[$currentColor])) {
+            $colors[$currentColor] = ucfirst($currentColor);
+        }
+
+        // Exclude the selected primary color so it does not appear in secondary color
+        if ($exclude && isset($colors[$exclude])) {
+            unset($colors[$exclude]);
+        }
+
+        return $colors;
     }
 }

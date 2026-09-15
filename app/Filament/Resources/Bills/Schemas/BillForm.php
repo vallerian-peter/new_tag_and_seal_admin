@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\Bills\Schemas;
 
+use App\Support\UuidHelper;
+use Filament\Forms\Components\Hidden;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -13,11 +15,9 @@ class BillForm
     {
         return $schema
             ->components([
-                TextInput::make('uuid')
-                    ->label('UUID')
-                    ->required()
-                    ->maxLength(255)
-                    ->disabledOn('edit'),
+                Hidden::make('uuid')
+                    ->default(fn () => UuidHelper::generate())
+                    ->required(),
                 TextInput::make('billNo')
                     ->label('Bill Number')
                     ->maxLength(30)
@@ -31,21 +31,23 @@ class BillForm
                 Select::make('farmerId')
                     ->label('Farmer')
                     ->relationship('farmer', 'firstName')
-                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->firstName ?? '').' '.($record->lastName ?? '')))
-                    ->searchable()
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->firstName ?? '').' '.($record->surname ?? '')))
+                    ->searchable(['firstName', 'surname'])
                     ->preload()
                     ->nullable(),
-                TextInput::make('extensionOfficerId')
-                    ->label('Extension Officer ID')
-                    ->numeric()
+                Select::make('extensionOfficerId')
+                    ->label('Extension Officer')
+                    ->relationship('extensionOfficer', 'firstName')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->firstName ?? '').' '.($record->lastName ?? '')))
+                    ->searchable(['firstName', 'lastName'])
+                    ->preload()
                     ->nullable(),
                 TextInput::make('subjectType')
                     ->label('Subject Type')
                     ->maxLength(255)
                     ->required(),
-                TextInput::make('subjectUuid')
-                    ->label('Subject UUID')
-                    ->maxLength(255)
+                Hidden::make('subjectUuid')
+                    ->default(fn () => \App\Support\UuidHelper::generate())
                     ->required(),
                 TextInput::make('quantity')
                     ->label('Quantity')

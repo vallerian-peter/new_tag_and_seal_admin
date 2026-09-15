@@ -29,14 +29,20 @@
             margin-inline-start: auto;
         }
 
-        /* Four equal columns, full width of the section (inputs stretch within each cell). */
+        /* Five columns on desktop, responsive breakdown */
         .ie-filter-fields {
             display: grid;
             width: 100%;
-            grid-template-columns: repeat(4, minmax(0, 1fr));
-            gap: 1rem 1.5rem;
+            grid-template-columns: repeat(5, minmax(0, 1fr));
+            gap: 1rem 1.25rem;
             align-items: end;
             padding-bottom: 20px;
+        }
+
+        @@media (max-width: 1280px) {
+            .ie-filter-fields {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
         }
 
         @@media (max-width: 1024px) {
@@ -333,6 +339,19 @@
                         </x-filament::input.select>
                     </x-filament::input.wrapper>
                 </div>
+                <div class="space-y-2 ie-filter-field fi-fo-field">
+                    <label class="fi-fo-field-label" for="ie-search">
+                        <span class="fi-fo-field-label-content">Search</span>
+                    </label>
+                    <x-filament::input.wrapper prefix-icon="heroicon-o-magnifying-glass">
+                        <x-filament::input
+                            id="ie-search"
+                            type="search"
+                            placeholder="Bill No, code, subject, note..."
+                            wire:model.live.debounce.300ms="search"
+                        />
+                    </x-filament::input.wrapper>
+                </div>
             </div>
             <div class="p-3 py-4 overflow-x-auto border border-gray-200 rounded-xl dark:border-gray-700">
                 <div class="ie-report-actions min-w-[min(100%,36rem)]">
@@ -364,7 +383,7 @@
                 heading="Income & Expenditure Report"
                 description="Summary totals and detailed transactions for the selected filters."
                 icon="heroicon-o-document-chart-bar"
-                wire:key="ie-summary-{{ $fromDate }}-{{ $toDate }}-{{ $farmUuid }}-{{ $farmerId }}"
+                wire:key="ie-summary-{{ $fromDate }}-{{ $toDate }}-{{ $farmUuid }}-{{ $farmerId }}-{{ $search }}"
             >
                 <div wire:loading.delay class="flex items-center gap-2 mb-4 text-sm no-print fi-text-color-500">
                     <x-filament::loading-indicator class="w-5 h-5" />

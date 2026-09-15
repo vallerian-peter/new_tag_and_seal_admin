@@ -8,6 +8,9 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Filters\SelectFilter;
@@ -29,12 +32,30 @@ class BillsTable
                 TextColumn::make('farm.name')
                     ->label('Farm')
                     ->searchable()
-                    ->sortable(),
-                TextColumn::make('farmer')
+                    ->sortable()
+                    ->default('—'),
+                TextColumn::make('farmer.full_name')
                     ->label('Farmer')
-                    ->state(fn ($record) => trim(($record->farmer?->firstName ?? '').' '.($record->farmer?->lastName ?? '')))
+                    ->state(fn ($record) => trim(($record->farmer?->firstName ?? $record->farm?->farmer?->firstName ?? '').' '.($record->farmer?->surname ?? $record->farm?->farmer?->surname ?? '')))
                     ->placeholder('—')
-                    ->searchable(['farmer.firstName', 'farmer.lastName']),
+                    ->searchable(query: function ($query, string $search) {
+                        return $query->where(function ($sub) use ($search) {
+                            $sub->whereHas('farmer', function ($q) use ($search) {
+                                $q->whereRaw("CONCAT(COALESCE(firstName, ''), ' ', COALESCE(middleName, ''), ' ', COALESCE(surname, '')) LIKE ?", ["%{$search}%"]);
+                            })->orWhereHas('farm.farmer', function ($q) use ($search) {
+                                $q->whereRaw("CONCAT(COALESCE(firstName, ''), ' ', COALESCE(middleName, ''), ' ', COALESCE(surname, '')) LIKE ?", ["%{$search}%"]);
+                            });
+                        });
+                    }),
+                TextColumn::make('extensionOfficer.full_name')
+                    ->label('Extension Officer')
+                    ->state(fn ($record) => trim(($record->extensionOfficer?->firstName ?? '').' '.($record->extensionOfficer?->lastName ?? '')))
+                    ->placeholder('—')
+                    ->searchable(query: function ($query, string $search) {
+                        return $query->whereHas('extensionOfficer', function ($q) use ($search) {
+                            $q->whereRaw("CONCAT(COALESCE(firstName, ''), ' ', COALESCE(middleName, ''), ' ', COALESCE(lastName, '')) LIKE ?", ["%{$search}%"]);
+                        });
+                    }),
                 TextColumn::make('subjectType')
                     ->label('Subject')
                     ->badge()
@@ -51,9 +72,14 @@ class BillsTable
                     ->badge()
                     ->color(fn (string $state): string => $state === 'paid' ? 'success' : 'warning'),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable(),
+                TextColumn::make('updated_at')
+                    ->label('Updated At')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -61,6 +87,17 @@ class BillsTable
                         'pending' => 'Pending',
                         'paid' => 'Paid',
                     ]),
+                SelectFilter::make('farmUuid')
+                    ->label('Farm')
+                    ->relationship('farm', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('farmerId')
+                    ->label('Farmer')
+                    ->relationship('farmer', 'firstName')
+                    ->getOptionLabelFromRecordUsing(fn ($record) => trim(($record->firstName ?? '').' '.($record->surname ?? '')))
+                    ->searchable()
+                    ->preload(),
                 SelectFilter::make('subjectType')
                     ->label('Subject Type')
                     ->options(fn () => \App\Models\Bill::query()
@@ -82,6 +119,56 @@ class BillsTable
             ])
             ->recordActions([
                 ActionGroup::make([
+                    ViewAction::make()
+                        ->modalHeading('Bill Details')
+                        ->modalSubmitAction(false)
+                        ->modalCancelActionLabel('Close')
+                        ->modalWidth('lg')
+                        ->infolist([
+                            TextEntry::make('billNo')
+                                ->label('Bill No')
+                                ->weight(FontWeight::Bold),
+                            TextEntry::make('farm.name')
+                                ->label('Farm')
+                                ->weight(FontWeight::Bold)
+                                ->default('—'),
+                            TextEntry::make('farmer')
+                                ->label('Farmer')
+                                ->state(fn ($record) => trim(($record->farmer?->firstName ?? '').' '.($record->farmer?->surname ?? '')))
+                                ->weight(FontWeight::Bold)
+                                ->default('—'),
+                            TextEntry::make('extensionOfficer')
+                                ->label('Extension Officer')
+                                ->state(fn ($record) => trim(($record->extensionOfficer?->firstName ?? '').' '.($record->extensionOfficer?->lastName ?? '')))
+                                ->weight(FontWeight::Bold)
+                                ->default('—'),
+                            TextEntry::make('subjectType')
+                                ->label('Subject Type')
+                                ->badge()
+                                ->weight(FontWeight::Bold),
+                            TextEntry::make('quantity')
+                                ->label('Quantity')
+                                ->weight(FontWeight::Bold),
+                            TextEntry::make('amount')
+                                ->label('Amount')
+                                ->money('TZS', locale: 'en')
+                                ->weight(FontWeight::Bold),
+                            TextEntry::make('status')
+                                ->label('Status')
+                                ->badge()
+                                ->color(fn (string $state): string => $state === 'paid' ? 'success' : 'warning')
+                                ->weight(FontWeight::Bold),
+                            TextEntry::make('notes')
+                                ->label('Notes')
+                                ->default('—')
+                                ->columnSpanFull(),
+                            TextEntry::make('created_at')
+                                ->label('Created At')
+                                ->dateTime(),
+                            TextEntry::make('updated_at')
+                                ->label('Updated At')
+                                ->dateTime(),
+                        ]),
                     Action::make('mark_paid')
                         ->label('Mark as Paid')
                         ->icon('heroicon-o-check-circle')

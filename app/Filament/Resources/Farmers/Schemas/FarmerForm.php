@@ -104,6 +104,15 @@ class FarmerForm
                     ->options(['active' => 'Active', 'notActive' => 'Not active'])
                     ->default('active')
                     ->required(),
+                TextInput::make('password')
+                    ->label('Update Login Password')
+                    ->password()
+                    ->revealable()
+                    ->nullable()
+                    ->minLength(6)
+                    ->maxLength(255)
+                    ->dehydrated(false)
+                    ->helperText('Leave blank to keep existing password. Enter a new password to update the login credentials for this farmer.'),
             ]);
     }
 }

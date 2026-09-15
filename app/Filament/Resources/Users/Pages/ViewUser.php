@@ -33,11 +33,13 @@ class ViewUser extends ViewRecord
                         TextEntry::make('role')
                             ->label('User Role')
                             ->badge()
+                            ->formatStateUsing(fn (string $state) => \App\Enums\UserRole::getDisplayName($state))
                             ->color(fn (string $state): string => match ($state) {
                                 'systemUser' => 'success',
                                 'farmer' => 'info',
                                 'extensionOfficer' => 'warning',
                                 'vet' => 'danger',
+                                'farmInvitedUser' => 'primary',
                                 default => 'gray',
                             }),
                         TextEntry::make('status')
@@ -54,18 +56,21 @@ class ViewUser extends ViewRecord
                 Section::make('Profile Details')
                     ->description('Linked profile information')
                     ->schema([
-                        TextEntry::make('roleId')
-                            ->label('Profile Reference ID')
-                            ->icon('heroicon-o-link'),
-                        TextEntry::make('createdBy')
-                            ->label('Created By User ID')
+                        TextEntry::make('profile_name')
+                            ->label('Linked Profile Name')
+                            ->getStateUsing(fn ($record) => $record->getFilamentName())
+                            ->weight('bold')
+                            ->icon('heroicon-o-user'),
+                        TextEntry::make('creator.username')
+                            ->label('Created By')
+                            ->formatStateUsing(fn ($record) => $record->creator?->getFilamentName() ?? $record->creator?->username ?? 'System')
                             ->placeholder('System'),
-                        TextEntry::make('updatedBy')
-                            ->label('Last Updated By User ID')
+                        TextEntry::make('updater.username')
+                            ->label('Last Updated By')
+                            ->formatStateUsing(fn ($record) => $record->updater?->getFilamentName() ?? $record->updater?->username ?? 'N/A')
                             ->placeholder('N/A'),
                     ])
-                    ->columns(3)
-                    ->collapsible(),
+                    ->columns(3),
 
                 Section::make('System Timestamps')
                     ->description('Record creation and modification dates')
@@ -79,9 +84,7 @@ class ViewUser extends ViewRecord
                             ->dateTime('M d, Y h:i A')
                             ->icon('heroicon-o-arrow-path'),
                     ])
-                    ->columns(2)
-                    ->collapsible()
-                    ->collapsed(),
+                    ->columns(2),
             ]);
     }
 }

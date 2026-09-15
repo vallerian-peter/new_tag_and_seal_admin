@@ -23,11 +23,6 @@ class Vaccine extends Model
         return $this->belongsTo(VaccineType::class, 'vaccineTypeId');
     }
 
-    public function vaccineSchedule()
-    {
-        return $this->belongsTo(VaccineSchedule::class, 'vaccineSchedule');
-    }
-
     public function farm()
     {
         return $this->belongsTo(Farm::class, 'farmUuid', 'uuid');

@@ -5,6 +5,7 @@ namespace App\Filament\Resources\FarmUsers;
 use App\Filament\Resources\FarmUsers\Pages\CreateFarmUser;
 use App\Filament\Resources\FarmUsers\Pages\EditFarmUser;
 use App\Filament\Resources\FarmUsers\Pages\ListFarmUsers;
+use App\Filament\Resources\FarmUsers\Pages\ViewFarmUser;
 use App\Filament\Resources\FarmUsers\Schemas\FarmUserForm;
 use App\Filament\Resources\FarmUsers\Tables\FarmUsersTable;
 use App\Models\FarmUser;
@@ -50,6 +51,7 @@ class FarmUserResource extends Resource
         return [
             'index' => ListFarmUsers::route('/'),
             'create' => CreateFarmUser::route('/create'),
+            'view' => ViewFarmUser::route('/{record}'),
             'edit' => EditFarmUser::route('/{record}/edit'),
         ];
     }

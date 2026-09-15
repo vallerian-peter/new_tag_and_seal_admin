@@ -26,10 +26,6 @@ class MedicationsTable
                 TextColumn::make('#')
                     ->label('#')
                     ->rowIndex(),
-                TextColumn::make('uuid')
-                    ->label('UUID')
-                    ->toggleable()
-                    ->searchable(),
                 TextColumn::make('farm.name')
                     ->label('Farm')
                     ->searchable()
@@ -38,11 +34,6 @@ class MedicationsTable
                     ->label('Livestock Tag')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('eventDate')
-                    ->label('Event Date')
-                    ->dateTime()
-                    ->sortable()
-                    ->formatStateUsing(fn ($record, $state) => $state ?? $record->created_at),
                 TextColumn::make('disease.name')
                     ->label('Disease')
                     ->searchable()
@@ -51,31 +42,65 @@ class MedicationsTable
                     ->label('Medicine')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('eventDate')
+                    ->label('Event Date')
+                    ->dateTime()
+                    ->sortable()
+                    ->formatStateUsing(fn ($record, $state) => $state ?? $record->created_at),
                 TextColumn::make('medicationDate')
-                    ->label('Treatment Date')
+                    ->label('Medication Date')
                     ->date()
                     ->sortable(),
                 TextColumn::make('nextMedicationDate')
-                    ->label('Next Treatment Date')
+                    ->label('Next Dose Date')
                     ->date()
-                    ->sortable()
-                    ->toggleable(),
+                    ->sortable(),
                 TextColumn::make('quantity')
                     ->label('Quantity')
-                    ->toggleable(),
+                    ->sortable(),
+                TextColumn::make('withdrawalPeriod')
+                    ->label('Withdrawal Period (days)')
+                    ->numeric()
+                    ->sortable(),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
+                TextColumn::make('updated_at')
+                    ->label('Updated At')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
-            ->filters([])
+            ->filters([
+                SelectFilter::make('farmUuid')
+                    ->label('Farm')
+                    ->relationship('farm', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('livestockUuid')
+                    ->label('Livestock')
+                    ->relationship('livestock', 'identificationNumber')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('diseaseId')
+                    ->label('Disease')
+                    ->relationship('disease', 'name')
+                    ->searchable()
+                    ->preload(),
+                SelectFilter::make('medicineId')
+                    ->label('Medicine')
+                    ->relationship('medicine', 'name')
+                    ->searchable()
+                    ->preload(),
+            ])
             ->recordActions([
                 ActionGroup::make([
                     Action::make('view')
                         ->label('View')
                         ->icon('heroicon-o-eye')
-                        ->modalHeading('Treatment Details')
+                        ->modalHeading('Medication Event Details')
                         ->modalSubmitAction(false)
                         ->modalCancelActionLabel('Close')
                         ->modalWidth('2xl')
@@ -84,11 +109,6 @@ class MedicationsTable
                                 ->schema([
                                     Grid::make(2)
                                         ->schema([
-                                            TextEntry::make('uuid')
-                                                ->label('UUID')
-                                                ->weight(FontWeight::Bold)
-                                                ->copyable()
-                                                ->columnSpan(2),
                                             TextEntry::make('farm.name')
                                                 ->label('Farm')
                                                 ->weight(FontWeight::Bold)

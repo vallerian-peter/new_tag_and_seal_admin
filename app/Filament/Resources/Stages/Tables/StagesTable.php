@@ -30,10 +30,10 @@ class StagesTable
                     ->badge()
                     ->color('info'),
                 TextColumn::make('created_at')
-                    ->label('Created')
+                    ->label('Created At')
                     ->dateTime()
                     ->sortable()
-                    ->toggleable(),
+                    ,
                 TextColumn::make('updated_at')
                     ->label('Updated')
                     ->dateTime()

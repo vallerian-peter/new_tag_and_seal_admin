@@ -70,6 +70,7 @@ class IncomeExpenditureReport extends Page
             'to' => $this->toDate,
             'farmUuid' => $this->farmUuid,
             'farmerId' => $this->farmerId,
+            'search' => $this->search,
         ]);
     }
 
@@ -80,6 +81,8 @@ class IncomeExpenditureReport extends Page
     public ?string $farmUuid = null;
 
     public ?string $farmerId = null;
+
+    public ?string $search = null;
 
     public array $summary = [
         'totalIncome' => 0.0,
@@ -132,12 +135,19 @@ class IncomeExpenditureReport extends Page
         $this->refreshReport();
     }
 
+    public function updatedSearch(?string $value): void
+    {
+        $this->search = filled($value) ? $value : null;
+        $this->refreshReport();
+    }
+
     public function resetFilters(): void
     {
         $this->fromDate = now()->startOfMonth()->toDateString();
         $this->toDate = now()->toDateString();
         $this->farmUuid = null;
         $this->farmerId = null;
+        $this->search = null;
         $this->refreshReport();
     }
 
@@ -187,6 +197,7 @@ class IncomeExpenditureReport extends Page
             $this->toDate,
             $this->farmUuid,
             $this->farmerId,
+            $this->search,
         );
 
         $this->summary = $data['summary'];
