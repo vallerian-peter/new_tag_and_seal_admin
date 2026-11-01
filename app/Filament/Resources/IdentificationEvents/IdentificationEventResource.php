@@ -22,7 +22,7 @@ class IdentificationEventResource extends Resource
     protected static ?string $navigationLabel = 'Identification Events';
     protected static ?string $modelLabel = 'Identification Event';
     protected static ?string $pluralModelLabel = 'Identification Events';
-    protected static ?int $navigationSort = 24;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

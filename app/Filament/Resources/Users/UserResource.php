@@ -23,15 +23,15 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-users';
 
-    protected static UnitEnum|string|null $navigationGroup = 'People & Users';
+    protected static UnitEnum|string|null $navigationGroup = 'People & Organization';
 
-    protected static ?string $navigationLabel = 'Users';
+    protected static ?string $navigationLabel = 'User Accounts';
 
     protected static ?string $modelLabel = 'User';
 
     protected static ?string $pluralModelLabel = 'Users';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 7;
 
     protected static ?string $recordTitleAttribute = 'email';
 

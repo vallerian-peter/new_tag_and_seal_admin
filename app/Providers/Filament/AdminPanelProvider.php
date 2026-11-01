@@ -63,18 +63,22 @@ class AdminPanelProvider extends PanelProvider
                 LivestockByTypeChart::class,
             ])
             ->navigationGroups([
-                NavigationGroup::make('Geographical')
+                NavigationGroup::make('People & Organization')
                     ->collapsed(false),
-                NavigationGroup::make('People & Users')
+                NavigationGroup::make('Animals & Livestock')
                     ->collapsed(false),
-                NavigationGroup::make('Bills and Report')
+                NavigationGroup::make('Events & Logs')
                     ->collapsed(false),
-                NavigationGroup::make('Logs & Events')
+                NavigationGroup::make('Blueprint Engine')
                     ->collapsed(false),
-                NavigationGroup::make('Logs Reference Data')
+                NavigationGroup::make('Finance & Billing')
                     ->collapsed(false),
-                NavigationGroup::make('System & Configuration')
-                    ->collapsed(false),
+                NavigationGroup::make('Reference Master Data')
+                    ->collapsed(true),
+                NavigationGroup::make('Geographical Locations')
+                    ->collapsed(true),
+                NavigationGroup::make('System & Security')
+                    ->collapsed(true),
             ])
             ->globalSearch(ResourceGlobalSearchProvider::class)
             ->globalSearchKeyBindings(['mod+k', 'ctrl+k'])

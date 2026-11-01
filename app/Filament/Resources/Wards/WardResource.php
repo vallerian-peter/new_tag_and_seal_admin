@@ -21,7 +21,7 @@ class WardResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-building-office';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Geographical';
+    protected static UnitEnum|string|null $navigationGroup = 'Geographical Locations';
 
     protected static ?string $navigationLabel = 'Wards';
 
@@ -29,7 +29,7 @@ class WardResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Wards';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {

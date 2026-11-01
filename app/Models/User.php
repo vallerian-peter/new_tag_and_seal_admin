@@ -8,8 +8,12 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasName;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser, HasName
@@ -31,6 +35,15 @@ class User extends Authenticatable implements FilamentUser, HasName
         'createdBy',
         'updatedBy',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $user): void {
+            if (empty($user->uuid)) {
+                $user->uuid = (string) Str::uuid();
+            }
+        });
+    }
 
     /**
      * The attributes that should be hidden for serialization.
@@ -115,6 +128,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function hasRole(string|array $roles): bool
     {
         $roles = is_array($roles) ? $roles : [$roles];
+
         return in_array($this->role, $roles);
     }
 
@@ -140,6 +154,31 @@ class User extends Authenticatable implements FilamentUser, HasName
     public function canManageLivestock(): bool
     {
         return $this->hasRole(UserRole::livestockManagers());
+    }
+
+    public function hasPlatformPermission(string $permission): bool
+    {
+        if (! Schema::hasTable('platform_permissions') || empty($this->uuid)) {
+            return false;
+        }
+
+        return DB::table('user_platform_permissions')
+            ->join('platform_permissions', 'platform_permissions.id', '=', 'user_platform_permissions.permission_id')
+            ->where('user_platform_permissions.user_uuid', $this->uuid)
+            ->where('platform_permissions.code', $permission)
+            ->exists();
+    }
+
+    public function platformPermissions(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            PlatformPermission::class,
+            'user_platform_permissions',
+            'user_uuid',
+            'permission_id',
+            'uuid',
+            'id',
+        )->withTimestamps();
     }
 
     /**
@@ -188,6 +227,7 @@ class User extends Authenticatable implements FilamentUser, HasName
     public static function findByUsernameOrEmail(string $login): ?self
     {
         $field = filter_var($login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
+
         return self::where($field, $login)->first();
     }
 
@@ -257,25 +297,29 @@ class User extends Authenticatable implements FilamentUser, HasName
             if ($profile) {
                 // If it's a Farmer profile
                 if ($this->role === UserRole::FARMER) {
-                    $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->surname);
+                    $name = trim($profile->firstName.' '.($profile->middleName ?? '').' '.$profile->surname);
+
                     return $name ?: ($this->username ?? $this->email ?? 'User');
                 }
 
                 // If it's a SystemUser or Vet profile
                 if (in_array($this->role, [UserRole::SYSTEM_USER, UserRole::VET])) {
-                    $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->lastName);
+                    $name = trim($profile->firstName.' '.($profile->middleName ?? '').' '.$profile->lastName);
+
                     return $name ?: ($this->username ?? $this->email ?? 'User');
                 }
 
                 // If it's an Extension Officer profile
                 if ($this->role === UserRole::EXTENSION_OFFICER) {
-                    $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->lastName);
+                    $name = trim($profile->firstName.' '.($profile->middleName ?? '').' '.$profile->lastName);
+
                     return $name ?: ($this->username ?? $this->email ?? 'User');
                 }
 
                 // If it's a Farm User profile
                 if ($this->role === UserRole::FARM_INVITED_USER) {
-                    $name = trim($profile->firstName . ' ' . ($profile->middleName ?? '') . ' ' . $profile->lastName);
+                    $name = trim($profile->firstName.' '.($profile->middleName ?? '').' '.$profile->lastName);
+
                     return $name ?: ($this->username ?? $this->email ?? 'User');
                 }
             }

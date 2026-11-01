@@ -21,9 +21,9 @@ class IncomeExpenditureReport extends Page
 
     protected static ?string $navigationLabel = 'Income & Expenditure';
 
-    protected static string|UnitEnum|null $navigationGroup = 'Bills and Report';
+    protected static string|UnitEnum|null $navigationGroup = 'Finance & Billing';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $slug = 'reports/income-expenditure';
 

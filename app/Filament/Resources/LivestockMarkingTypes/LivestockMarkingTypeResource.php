@@ -20,15 +20,15 @@ class LivestockMarkingTypeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Logs Reference Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Reference Master Data';
 
-    protected static ?string $navigationLabel = 'Livestock Marking Types';
+    protected static ?string $navigationLabel = 'Marking Types';
 
-    protected static ?string $modelLabel = 'Livestock Marking Type';
+    protected static ?string $modelLabel = 'Marking Type';
 
-    protected static ?string $pluralModelLabel = 'Livestock Marking Types';
+    protected static ?string $pluralModelLabel = 'Marking Types';
 
-    protected static ?int $navigationSort = 23;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

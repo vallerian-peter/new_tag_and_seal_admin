@@ -21,7 +21,7 @@ class StreetResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-building-office-2';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Geographical';
+    protected static UnitEnum|string|null $navigationGroup = 'Geographical Locations';
 
     protected static ?string $navigationLabel = 'Streets';
 
@@ -29,7 +29,7 @@ class StreetResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Streets';
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 7;
 
     public static function form(Schema $schema): Schema
     {

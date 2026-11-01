@@ -23,9 +23,9 @@ class LivestockResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-cube';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Livestock & Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Animals & Livestock';
 
-    protected static ?string $navigationLabel = 'Livestock';
+    protected static ?string $navigationLabel = 'Legacy Livestock';
 
     protected static ?string $modelLabel = 'Livestock';
 

@@ -21,7 +21,7 @@ class DivisionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-squares-2x2';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Geographical';
+    protected static UnitEnum|string|null $navigationGroup = 'Geographical Locations';
 
     protected static ?string $navigationLabel = 'Divisions';
 
@@ -29,7 +29,7 @@ class DivisionResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Divisions';
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

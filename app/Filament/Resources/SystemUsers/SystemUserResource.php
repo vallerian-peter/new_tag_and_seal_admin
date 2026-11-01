@@ -22,7 +22,7 @@ class SystemUserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-circle';
 
-    protected static UnitEnum|string|null $navigationGroup = 'People & Users';
+    protected static UnitEnum|string|null $navigationGroup = 'People & Organization';
 
     protected static ?string $navigationLabel = 'System User Profiles';
 
@@ -30,7 +30,7 @@ class SystemUserResource extends Resource
 
     protected static ?string $pluralModelLabel = 'System User Profiles';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
     {

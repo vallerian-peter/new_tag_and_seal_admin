@@ -20,7 +20,7 @@ class FinanceIncomeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-banknotes';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Bills and Report';
+    protected static UnitEnum|string|null $navigationGroup = 'Finance & Billing';
 
     protected static ?string $navigationLabel = 'Income';
 
@@ -28,7 +28,7 @@ class FinanceIncomeResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Incomes';
 
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {

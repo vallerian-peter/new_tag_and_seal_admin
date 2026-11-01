@@ -20,7 +20,7 @@ class TeethClippingMethodResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-scissors';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Logs Reference Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Reference Master Data';
 
     protected static ?string $navigationLabel = 'Teeth Clipping Methods';
 
@@ -28,7 +28,7 @@ class TeethClippingMethodResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Teeth Clipping Methods';
 
-    protected static ?int $navigationSort = 21;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
     {

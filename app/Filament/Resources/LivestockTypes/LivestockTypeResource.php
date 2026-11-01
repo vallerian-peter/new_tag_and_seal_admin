@@ -21,15 +21,15 @@ class LivestockTypeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-squares-plus';
     
-    protected static UnitEnum|string|null $navigationGroup = 'Livestock & Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Animals & Livestock';
     
-    protected static ?string $navigationLabel = 'Livestock Types';
+    protected static ?string $navigationLabel = 'Animal Types';
     
-    protected static ?string $modelLabel = 'Livestock Type';
+    protected static ?string $modelLabel = 'Animal Type';
     
-    protected static ?string $pluralModelLabel = 'Livestock Types';
+    protected static ?string $pluralModelLabel = 'Animal Types';
     
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 4;
 
     public static function form(Schema $schema): Schema
     {

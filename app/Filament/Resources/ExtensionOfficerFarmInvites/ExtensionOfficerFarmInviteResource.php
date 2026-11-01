@@ -23,7 +23,7 @@ class ExtensionOfficerFarmInviteResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedKey;
 
-    protected static UnitEnum|string|null $navigationGroup = 'People & Users';
+    protected static UnitEnum|string|null $navigationGroup = 'People & Organization';
 
     protected static ?string $navigationLabel = 'Farm Invites';
 
@@ -31,7 +31,7 @@ class ExtensionOfficerFarmInviteResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Farm Invites';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {

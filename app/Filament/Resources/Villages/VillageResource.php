@@ -21,7 +21,7 @@ class VillageResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-home-modern';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Geographical';
+    protected static UnitEnum|string|null $navigationGroup = 'Geographical Locations';
 
     protected static ?string $navigationLabel = 'Villages';
 
@@ -29,7 +29,7 @@ class VillageResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Villages';
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
     {

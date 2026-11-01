@@ -21,7 +21,7 @@ class SchoolLevelResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-academic-cap';
 
-    protected static UnitEnum|string|null $navigationGroup = 'System & Configuration';
+    protected static UnitEnum|string|null $navigationGroup = 'Reference Master Data';
 
     protected static ?string $navigationLabel = 'School Levels';
 
@@ -29,7 +29,7 @@ class SchoolLevelResource extends Resource
 
     protected static ?string $pluralModelLabel = 'School Levels';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 8;
 
     public static function form(Schema $schema): Schema
     {

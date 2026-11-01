@@ -21,7 +21,7 @@ class LegalStatusResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-scale';
 
-    protected static UnitEnum|string|null $navigationGroup = 'System & Configuration';
+    protected static UnitEnum|string|null $navigationGroup = 'Reference Master Data';
 
     protected static ?string $navigationLabel = 'Legal Statuses';
 
@@ -29,7 +29,7 @@ class LegalStatusResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Legal Statuses';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 9;
 
     public static function form(Schema $schema): Schema
     {

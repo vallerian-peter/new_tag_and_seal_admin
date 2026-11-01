@@ -20,7 +20,7 @@ class BillResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-receipt-percent';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Bills and Report';
+    protected static UnitEnum|string|null $navigationGroup = 'Finance & Billing';
 
     protected static ?string $navigationLabel = 'Bills';
 
@@ -28,7 +28,7 @@ class BillResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Bills';
 
-    protected static ?int $navigationSort = 20;
+    protected static ?int $navigationSort = 1;
 
     public static function form(Schema $schema): Schema
     {

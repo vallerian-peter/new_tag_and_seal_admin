@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Resources\EventRecords\EventRecordResource;
 use App\Models\AbortedPregnancy;
 use App\Models\BirthEvent;
 use App\Models\Deworming;
@@ -17,6 +18,7 @@ use App\Models\Vaccination;
 use App\Models\WeightChange;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Illuminate\Support\Facades\Route;
 
 class LivestockDataStats extends BaseWidget
 {
@@ -25,97 +27,123 @@ class LivestockDataStats extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Feedings', Feeding::count())
+            Stat::make('Feedings', $this->countOf(Feeding::class))
                 ->description('Feeding logs')
                 ->descriptionIcon('heroicon-o-beaker')
                 ->color('success')
-                ->url(route('filament.admin.resources.feedings.index'))
+                ->url($this->eventUrl('growth', 'filament.admin.resources.feedings.index'))
                 ->icon('heroicon-o-beaker'),
 
-            Stat::make('Dewormings', Deworming::count())
+            Stat::make('Dewormings', $this->countOf(Deworming::class))
                 ->description('Deworming logs')
                 ->descriptionIcon('heroicon-o-shield-check')
                 ->color('info')
-                ->url(route('filament.admin.resources.dewormings.index'))
+                ->url($this->eventUrl('health', 'filament.admin.resources.dewormings.index'))
                 ->icon('heroicon-o-shield-check'),
 
-            Stat::make('Weight Changes', WeightChange::count())
+            Stat::make('Weight Changes', $this->countOf(WeightChange::class))
                 ->description('Weight change logs')
                 ->descriptionIcon('heroicon-o-scale')
                 ->color('warning')
-                ->url(route('filament.admin.resources.weight-changes.index'))
+                ->url($this->eventUrl('growth', 'filament.admin.resources.weight-changes.index'))
                 ->icon('heroicon-o-scale'),
 
-            Stat::make('Vaccinations', Vaccination::count())
+            Stat::make('Vaccinations', $this->countOf(Vaccination::class))
                 ->description('Vaccination logs')
                 ->descriptionIcon('heroicon-o-check-circle')
                 ->color('success')
-                ->url(route('filament.admin.resources.vaccinations.index'))
+                ->url($this->eventUrl('health', 'filament.admin.resources.vaccinations.index'))
                 ->icon('heroicon-o-check-circle'),
 
-            Stat::make('Treatments', Treatment::count())
+            Stat::make('Treatments', $this->countOf(Treatment::class))
                 ->description('Treatment logs')
                 ->descriptionIcon('heroicon-o-heart')
                 ->color('danger')
-                ->url(route('filament.admin.resources.medications.index'))
+                ->url($this->eventUrl('health', 'filament.admin.resources.medications.index'))
                 ->icon('heroicon-o-heart'),
 
-            Stat::make('Disposals', Disposal::count())
+            Stat::make('Disposals', $this->countOf(Disposal::class))
                 ->description('Disposal logs')
                 ->descriptionIcon('heroicon-o-trash')
                 ->color('danger')
-                ->url(route('filament.admin.resources.disposals.index'))
+                ->url($this->eventUrl('movement', 'filament.admin.resources.disposals.index'))
                 ->icon('heroicon-o-trash'),
 
-            Stat::make('Transfers', Transfer::count())
+            Stat::make('Transfers', $this->countOf(Transfer::class))
                 ->description('Transfer logs')
                 ->descriptionIcon('heroicon-o-arrow-right-circle')
                 ->color('info')
-                ->url(route('filament.admin.resources.transfers.index'))
+                ->url($this->eventUrl('movement', 'filament.admin.resources.transfers.index'))
                 ->icon('heroicon-o-arrow-right-circle'),
 
-            Stat::make('Inseminations', Insemination::count())
+            Stat::make('Inseminations', $this->countOf(Insemination::class))
                 ->description('Insemination logs')
                 ->descriptionIcon('heroicon-o-heart')
                 ->color('success')
-                ->url(route('filament.admin.resources.inseminations.index'))
+                ->url($this->eventUrl('breeding', 'filament.admin.resources.inseminations.index'))
                 ->icon('heroicon-o-heart'),
 
-            Stat::make('Milkings', Milking::count())
+            Stat::make('Milkings', $this->countOf(Milking::class))
                 ->description('Milking logs')
                 ->descriptionIcon('heroicon-o-beaker')
                 ->color('info')
-                ->url(route('filament.admin.resources.milkings.index'))
+                ->url($this->eventUrl('production', 'filament.admin.resources.milkings.index'))
                 ->icon('heroicon-o-beaker'),
 
-            Stat::make('Pregnancies', Pregnancy::count())
+            Stat::make('Pregnancies', $this->countOf(Pregnancy::class))
                 ->description('Pregnancy logs')
                 ->descriptionIcon('heroicon-o-sparkles')
                 ->color('warning')
-                ->url(route('filament.admin.resources.pregnancies.index'))
+                ->url($this->eventUrl('breeding', 'filament.admin.resources.pregnancies.index'))
                 ->icon('heroicon-o-sparkles'),
 
-            Stat::make('Dryoffs', Dryoff::count())
+            Stat::make('Dryoffs', $this->countOf(Dryoff::class))
                 ->description('Dry-off logs')
                 ->descriptionIcon('heroicon-o-pause-circle')
                 ->color('gray')
-                ->url(route('filament.admin.resources.dryoffs.index'))
+                ->url($this->eventUrl('breeding', 'filament.admin.resources.dryoffs.index'))
                 ->icon('heroicon-o-pause-circle'),
 
-            Stat::make('Birth Events', BirthEvent::count())
+            Stat::make('Birth Events', $this->countOf(BirthEvent::class))
                 ->description('Birth event logs')
                 ->descriptionIcon('heroicon-o-gift')
                 ->color('success')
-                ->url(route('filament.admin.resources.birth-events.index'))
+                ->url($this->eventUrl('births', 'filament.admin.resources.birth-events.index'))
                 ->icon('heroicon-o-gift'),
 
-            Stat::make('Aborted Pregnancies', AbortedPregnancy::count())
+            Stat::make('Aborted Pregnancies', $this->countOf(AbortedPregnancy::class))
                 ->description('Aborted pregnancy logs')
                 ->descriptionIcon('heroicon-o-exclamation-triangle')
                 ->color('danger')
-                ->url(route('filament.admin.resources.aborted-pregnancies.index'))
+                ->url($this->eventUrl('births', 'filament.admin.resources.aborted-pregnancies.index'))
                 ->icon('heroicon-o-exclamation-triangle'),
         ];
+    }
+
+    protected function countOf(string $modelClass): int
+    {
+        try {
+            return $modelClass::count();
+        } catch (\Throwable) {
+            return 0;
+        }
+    }
+
+    protected function eventUrl(string $family, ?string $legacyRoute = null): ?string
+    {
+        if ($legacyRoute && Route::has($legacyRoute)) {
+            return route($legacyRoute);
+        }
+
+        if (Route::has('filament.admin.resources.event-records.index') && EventRecordResource::canViewAny()) {
+            return EventRecordResource::getUrl('index', [
+                'tableFilters' => [
+                    'family' => ['value' => $family],
+                ],
+            ]);
+        }
+
+        return null;
     }
 }
 

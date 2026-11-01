@@ -20,7 +20,7 @@ class TailDockingMethodResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Logs Reference Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Reference Master Data';
 
     protected static ?string $navigationLabel = 'Tail Docking Methods';
 
@@ -28,7 +28,7 @@ class TailDockingMethodResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Tail Docking Methods';
 
-    protected static ?int $navigationSort = 22;
+    protected static ?int $navigationSort = 5;
 
     public static function form(Schema $schema): Schema
     {

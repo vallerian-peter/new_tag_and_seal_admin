@@ -21,7 +21,7 @@ class DistrictResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-map-pin';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Geographical';
+    protected static UnitEnum|string|null $navigationGroup = 'Geographical Locations';
 
     protected static ?string $navigationLabel = 'Districts';
 

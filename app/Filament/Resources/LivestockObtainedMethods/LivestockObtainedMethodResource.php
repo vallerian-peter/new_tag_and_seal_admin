@@ -21,15 +21,15 @@ class LivestockObtainedMethodResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-arrow-path';
     
-    protected static UnitEnum|string|null $navigationGroup = 'Livestock & Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Animals & Livestock';
     
     protected static ?string $navigationLabel = 'Acquisition Methods';
     
-    protected static ?string $modelLabel = 'Livestock Obtained Method';
+    protected static ?string $modelLabel = 'Acquisition Method';
     
-    protected static ?string $pluralModelLabel = 'Livestock Obtained Methods';
+    protected static ?string $pluralModelLabel = 'Acquisition Methods';
     
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 7;
 
     public static function form(Schema $schema): Schema
     {

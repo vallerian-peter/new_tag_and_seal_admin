@@ -21,7 +21,7 @@ class BreedResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Livestock & Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Animals & Livestock';
 
     protected static ?string $navigationLabel = 'Breeds';
 
@@ -29,7 +29,7 @@ class BreedResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Breeds';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 6;
 
     public static function form(Schema $schema): Schema
     {

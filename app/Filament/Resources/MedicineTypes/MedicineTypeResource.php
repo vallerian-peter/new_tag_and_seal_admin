@@ -21,7 +21,7 @@ class MedicineTypeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Logs Reference Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Reference Master Data';
 
     protected static ?string $navigationLabel = 'Medicine Types';
 

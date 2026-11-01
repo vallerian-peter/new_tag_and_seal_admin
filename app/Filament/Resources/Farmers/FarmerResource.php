@@ -24,7 +24,7 @@ class FarmerResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-user-group';
 
-    protected static UnitEnum|string|null $navigationGroup = 'People & Users';
+    protected static UnitEnum|string|null $navigationGroup = 'People & Organization';
 
     protected static ?string $navigationLabel = 'Farmers';
 

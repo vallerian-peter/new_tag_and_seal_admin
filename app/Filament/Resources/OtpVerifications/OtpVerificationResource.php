@@ -23,7 +23,7 @@ class OtpVerificationResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
 
-    protected static UnitEnum|string|null $navigationGroup = 'Security & Verification';
+    protected static UnitEnum|string|null $navigationGroup = 'System & Security';
 
     protected static ?string $navigationLabel = 'OTP Verifications';
 

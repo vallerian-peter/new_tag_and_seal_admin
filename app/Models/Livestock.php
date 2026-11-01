@@ -2,16 +2,14 @@
 
 namespace App\Models;
 
-use App\Models\Breed;
-use App\Models\Farm;
-use App\Models\LivestockObtainedMethod;
-use App\Models\LivestockType;
-use App\Models\Specie;
-use Illuminate\Database\Eloquent\Model;
 use App\Support\UuidHelper;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Livestock extends Model
 {
+    use SoftDeletes;
+
     protected $fillable = [
         'farmUuid',  // Farm UUID reference (not auto-increment ID)
         'uuid',
@@ -36,6 +34,11 @@ class Livestock extends Model
         'weightAsOnRegistration',
         'primaryColor',
         'secondaryColor',
+        'deleted_by_uuid',
+        'delete_reason',
+        'restored_at',
+        'restored_by_uuid',
+        'revision',
         'created_at',  // Allow manual timestamp management
         'updated_at',  // Allow manual timestamp management
     ];
@@ -44,6 +47,9 @@ class Livestock extends Model
         'dateOfBirth' => 'date',
         'dateFirstEnteredToFarm' => 'date',
         'isIdentified' => 'boolean',
+        'deleted_at' => 'datetime',
+        'restored_at' => 'datetime',
+        'revision' => 'integer',
     ];
 
     protected static function booted(): void

@@ -21,7 +21,7 @@ class CountryResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-globe-americas';
     
-    protected static UnitEnum|string|null $navigationGroup = 'Geographical';
+    protected static UnitEnum|string|null $navigationGroup = 'Geographical Locations';
     
     protected static ?string $navigationLabel = 'Countries';
     

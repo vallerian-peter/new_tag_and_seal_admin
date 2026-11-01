@@ -22,7 +22,7 @@ class VaccineResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-beaker';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Logs Reference Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Reference Master Data';
 
     protected static ?string $navigationLabel = 'Vaccines';
 
@@ -30,7 +30,7 @@ class VaccineResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Vaccines';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordTitleAttribute = 'name';
 

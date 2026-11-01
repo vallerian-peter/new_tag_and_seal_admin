@@ -23,7 +23,7 @@ class FarmResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-building-storefront';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Livestock & Data';
+    protected static UnitEnum|string|null $navigationGroup = 'People & Organization';
 
     protected static ?string $navigationLabel = 'Farms';
 

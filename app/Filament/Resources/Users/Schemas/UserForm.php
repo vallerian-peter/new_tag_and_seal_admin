@@ -7,7 +7,6 @@ use App\Models\ExtensionOfficer;
 use App\Models\Farmer;
 use App\Models\FarmUser;
 use App\Models\SystemUser;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
@@ -59,7 +58,7 @@ class UserForm
                             ->label('Account Status')
                             ->options([
                                 'active' => 'Active',
-                                'notActive' => 'Not Active'
+                                'notActive' => 'Not Active',
                             ])
                             ->default('active')
                             ->required(),
@@ -84,29 +83,30 @@ class UserForm
                             })
                             ->options(function (Get $get) {
                                 $role = $get('role');
+
                                 return match ($role) {
                                     UserRole::FARMER => Farmer::query()
                                         ->get()
                                         ->mapWithKeys(fn ($f) => [
-                                            $f->id => trim("{$f->firstName} {$f->middleName} {$f->surname}") . ($f->phone1 ? " ({$f->phone1})" : ''),
+                                            $f->id => trim("{$f->firstName} {$f->middleName} {$f->surname}").($f->phone1 ? " ({$f->phone1})" : ''),
                                         ])
                                         ->toArray(),
                                     UserRole::EXTENSION_OFFICER => ExtensionOfficer::query()
                                         ->get()
                                         ->mapWithKeys(fn ($e) => [
-                                            $e->id => trim("{$e->firstName} {$e->lastName}") . ($e->phone ? " ({$e->phone})" : ''),
+                                            $e->id => trim("{$e->firstName} {$e->lastName}").($e->phone ? " ({$e->phone})" : ''),
                                         ])
                                         ->toArray(),
                                     UserRole::FARM_INVITED_USER => FarmUser::query()
                                         ->get()
                                         ->mapWithKeys(fn ($fu) => [
-                                            $fu->id => trim("{$fu->firstName} {$fu->middleName} {$fu->lastName}") . ($fu->phone ? " ({$fu->phone})" : ''),
+                                            $fu->id => trim("{$fu->firstName} {$fu->middleName} {$fu->lastName}").($fu->phone ? " ({$fu->phone})" : ''),
                                         ])
                                         ->toArray(),
                                     UserRole::SYSTEM_USER, UserRole::VET => SystemUser::query()
                                         ->get()
                                         ->mapWithKeys(fn ($s) => [
-                                            $s->id => trim("{$s->firstName} {$s->lastName}") . ($s->phone ? " ({$s->phone})" : ''),
+                                            $s->id => trim("{$s->firstName} {$s->lastName}").($s->phone ? " ({$s->phone})" : ''),
                                         ])
                                         ->toArray(),
                                     default => [],
@@ -117,7 +117,20 @@ class UserForm
                             ->required()
                             ->visible(fn (Get $get) => filled($get('role')))
                             ->helperText('Select the corresponding profile to link to this login user account.'),
-                    ])
+                    ]),
+
+                Section::make('Dynamic Platform Permissions')
+                    ->description('Controls access to blueprints, publishing, archive/restore, and upgrades.')
+                    ->visible(fn (Get $get) => $get('role') === UserRole::SYSTEM_USER && (auth()->user()?->hasPlatformPermission('permissions.manage') ?? false))
+                    ->schema([
+                        Select::make('platformPermissions')
+                            ->label('Permissions')
+                            ->relationship('platformPermissions', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->searchable()
+                            ->helperText('Permissions are explicit; leave only the responsibilities this administrator needs.'),
+                    ]),
             ]);
     }
 }

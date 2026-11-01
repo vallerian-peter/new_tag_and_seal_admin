@@ -3,34 +3,17 @@
 namespace App\Filament\Resources\Livestocks\Tables;
 
 use App\Filament\Resources\Livestocks\Pages\ViewLivestock;
-use App\Models\AbortedPregnancy;
-use App\Models\BirthEvent;
-use App\Models\Calving;
-use App\Models\Deworming;
-use App\Models\Disposal;
-use App\Models\Dryoff;
-use App\Models\Feeding;
-use App\Models\IdentificationEvent;
-use App\Models\Insemination;
-use App\Models\IronInjection;
-use App\Models\LivestockMarking;
-use App\Models\StageChange;
-use App\Models\TailDocking;
-use App\Models\TeethClipping;
-use App\Models\Treatment;
-use App\Models\Milking;
-use App\Models\Pregnancy;
-use App\Models\Transfer;
-use App\Models\Vaccination;
-use App\Models\WeightChange;
-use Filament\Actions\BulkActionGroup;
-use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
-use Filament\Actions\DeleteAction;
+use App\Models\Livestock;
+use App\Services\LivestockLifecycleService;
+use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Actions\RestoreAction;
+use Filament\Actions\ViewAction;
+use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 
 class LivestocksTable
@@ -39,6 +22,7 @@ class LivestocksTable
     {
         return $table
             ->defaultSort('created_at', 'desc')
+            ->selectable()
             ->columns([
                 TextColumn::make('#')
                     ->label('#')
@@ -119,69 +103,74 @@ class LivestocksTable
                 TextColumn::make('created_at')
                     ->label('Created At')
                     ->dateTime()
-                    ->sortable()
-                    ,
+                    ->sortable(),
                 TextColumn::make('updated_at')
                     ->label('Updated At')
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('deleted_at')
+                    ->label('Archived At')
+                    ->dateTime()
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('delete_reason')
+                    ->label('Archive Reason')
+                    ->wrap()
+                    ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                TrashedFilter::make(),
             ])
             ->recordActions([
                 ActionGroup::make([
-                    ViewAction::make(),
-                    EditAction::make(),
-                    DeleteAction::make()
-                        ->before(function ($record) {
-                            // Delete all livestock logs/events before deleting Livestock
-                            self::deleteLivestockLogs($record);
-                        }),
-                ])
-            ])
-            ->toolbarActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make()
-                        ->before(function ($records) {
-                            // Delete all livestock logs for each livestock
-                            foreach ($records as $livestock) {
-                                self::deleteLivestockLogs($livestock);
-                            }
+                    ViewAction::make()
+                        ->visible(fn (Livestock $record): bool => ! $record->trashed()),
+                    EditAction::make()
+                        ->visible(fn (Livestock $record): bool => ! $record->trashed()),
+                    Action::make('archive')
+                        ->label('Archive')
+                        ->icon('heroicon-o-archive-box')
+                        ->color('danger')
+                        ->requiresConfirmation()
+                        ->schema([
+                            Textarea::make('delete_reason')
+                                ->label('Archive reason')
+                                ->required()
+                                ->minLength(10)
+                                ->maxLength(1000),
+                        ])
+                        ->action(function (Livestock $record, array $data): void {
+                            app(LivestockLifecycleService::class)->archive(
+                                $record,
+                                auth()->user(),
+                                $data['delete_reason'],
+                                [
+                                    'ip_address' => request()->ip(),
+                                    'user_agent' => request()->userAgent(),
+                                ],
+                            );
+
+                            Notification::make()
+                                ->title('Livestock archived')
+                                ->success()
+                                ->send();
+                        })
+                        ->visible(fn (Livestock $record): bool => ! $record->trashed()),
+                    RestoreAction::make()
+                        ->using(function (Livestock $record): bool {
+                            app(LivestockLifecycleService::class)->restore(
+                                $record,
+                                auth()->user(),
+                                [
+                                    'ip_address' => request()->ip(),
+                                    'user_agent' => request()->userAgent(),
+                                ],
+                            );
+
+                            return true;
                         }),
                 ]),
             ]);
-    }
-
-    /**
-     * Delete all logs/events associated with a livestock.
-     */
-    protected static function deleteLivestockLogs($livestock): void
-    {
-        $livestockUuid = $livestock->uuid;
-        $deletedCount = 0;
-
-        // Delete all 14+ log types
-        $deletedCount += BirthEvent::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += AbortedPregnancy::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += WeightChange::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Vaccination::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Treatment::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Deworming::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Feeding::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Milking::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Insemination::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Pregnancy::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Dryoff::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Disposal::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Transfer::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += Calving::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += TeethClipping::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += TailDocking::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += IronInjection::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += LivestockMarking::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += StageChange::where('livestockUuid', $livestockUuid)->delete();
-        $deletedCount += IdentificationEvent::where('livestockUuid', $livestockUuid)->delete();
     }
 }

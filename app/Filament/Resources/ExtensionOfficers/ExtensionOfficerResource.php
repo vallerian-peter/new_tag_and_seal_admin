@@ -23,7 +23,7 @@ class ExtensionOfficerResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
-    protected static UnitEnum|string|null $navigationGroup = 'People & Users';
+    protected static UnitEnum|string|null $navigationGroup = 'People & Organization';
 
     protected static ?string $navigationLabel = 'Extension Officers';
 

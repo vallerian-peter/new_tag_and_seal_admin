@@ -21,7 +21,7 @@ class VaccineTypeResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-tag';
 
-    protected static UnitEnum|string|null $navigationGroup = 'Logs Reference Data';
+    protected static UnitEnum|string|null $navigationGroup = 'Reference Master Data';
 
     protected static ?string $navigationLabel = 'Vaccine Types';
 
@@ -29,7 +29,7 @@ class VaccineTypeResource extends Resource
 
     protected static ?string $pluralModelLabel = 'Vaccine Types';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Schema $schema): Schema
     {
